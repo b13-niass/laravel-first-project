@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Enums;
+
+enum Role: string
+{
+    case ADMIN = 'ADMIN';
+    case BOUTIQUIER = 'BOUTIQUIER';
+    case CLIENT = 'CLIENT';
+}
