@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Trait\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    use ApiResponseTrait;
     /**
      * Handle login request and generate Sanctum token.
      *
@@ -28,17 +30,20 @@ class AuthController extends Controller
         $credentials = $request->only('login', 'password');
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return $this->sendResponse('failed', null, 'Le Login ou le mot de passe est incorrect', 401);
+
         }
 
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
         // dd($token);
 
-        return response()->json([
+        $data = [
             'access_token' => $token,
             'token_type' => 'Bearer',
-        ]);
+        ];
+        return $this->sendResponse('success', $data, 'Connection réussi', 200);
+
     }
 
     public function refresh(Request $request)
@@ -55,10 +60,8 @@ class AuthController extends Controller
         // Create a new token
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return response()->json([
-            'token' => $token,
-            'message' => 'Token refreshed successfully',
-        ]);
+        return $this->sendResponse('success', $token, 'Token refreshed successfully', 200);
+
     }
 
     public function getAuthenticatedUser()

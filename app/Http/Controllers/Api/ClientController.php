@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientRequest;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use App\Models\User;
 use App\Trait\ApiResponseTrait;
@@ -35,7 +36,7 @@ class ClientController extends Controller
         }
 
         $data = $query->get();
-        return $this->sendResponse('success', $data, 'Liste des clients récupérée avec succès', 200);
+        return $this->sendResponse('success', ClientResource::collection($data) , 'Liste des clients récupérée avec succès', 200);
     }
 
     public function show(Request $request, $id)
