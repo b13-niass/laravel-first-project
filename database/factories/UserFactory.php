@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -11,45 +13,44 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    // protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
         return [
             'nom' => $this->faker->lastName,
             'prenom' => $this->faker->firstName,
-            'login' => $this->faker->unique()->safeEmail, // Génère un email unique
-            'password' => Hash::make('password'), // ou bcrypt('password')
-            'role' => $this->faker->randomElement(['ADMIN', 'BOUTIQUIER']),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'login' => $this->faker->unique()->userName,
+            'password' => 'password',
+            'role_id' => null,
+            'active' => true,
         ];
     }
 
-    /**
-     * Admin user
-     */
-    public function admin(): static
+    public function admin()
     {
-        return $this->state(fn(array $attributes) => [
-            'role' => 'ADMIN',
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => Role::where('role', 'ADMIN')->first()->id,
+            ];
+        });
     }
-    /**
-     * Admin boutiquier
-     */
-    public function boutiquier(): static
+
+    public function boutiquier()
     {
-        return $this->state(fn(array $attributes) => [
-            'role' => 'BOUTIQUIER',
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => Role::where('role', 'BOUTIQUIER')->first()->id,
+            ];
+        });
+    }
+
+    public function client()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => Role::where('role', 'CLIENT')->first()->id,
+            ];
+        });
     }
 }

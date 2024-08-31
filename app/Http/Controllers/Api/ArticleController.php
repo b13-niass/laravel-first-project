@@ -107,7 +107,6 @@ class ArticleController extends Controller
 
         $failedUpdates = [];
 
-        DB::beginTransaction();
 
         try {
             foreach ($articles as $article) {
@@ -124,9 +123,8 @@ class ArticleController extends Controller
                 }
             }
 
-            DB::commit();
         } catch (\Exception $e) {
-            DB::rollBack();
+            
             $failedUpdates = $articles;
         }
 

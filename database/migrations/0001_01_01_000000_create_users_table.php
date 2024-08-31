@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('login')->unique();
             $table->string('password');
-            $table->enum('role', ['ADMIN', 'BOUTIQUIER'])->nullable();
+            $table->integer('role_id');
+            $table->boolean('active');
             $table->timestamps();
         });
 

@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Article extends Model
+class Dette extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'libelle',
-        'prix',
-        'qte',
+        'montant',
+        'montantDu',
+        'montantRestant',
+        'client_id',
     ];
 
     /**
@@ -21,12 +21,16 @@ class Article extends Model
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public function client(){
+        return $this->belongsTo(Client::class);
+    }
+
     /**
-     * La relation "plusieurs à plusieurs" avec le modèle Dette.
+     * La relation "plusieurs à plusieurs" avec le modèle Article.
      */
-    public function dettes()
+    public function articles()
     {
-        return $this->belongsToMany(Dette::class, 'article_dette')
+        return $this->belongsToMany(Article::class, 'article_dette')
             ->withPivot('qteVente', 'prixVente')
             ->withTimestamps();
     }

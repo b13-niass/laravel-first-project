@@ -2,38 +2,28 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Client>
- */
 class ClientFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    // protected $model = Client::class;
+
+    public function definition()
     {
         return [
-            'surnom' => $this->faker->unique()->word, // Génère un surnom unique
-            'telephone' => $this->faker->unique()->phoneNumber, // Génère un numéro de téléphone unique
-            'adresse' => $this->faker->address, // Adresse optionnelle
-            'user_id' => User::factory(), // Crée un utilisateur associé
-            'created_at' => now(),
-            'updated_at' => now(),
+            'surnom' => $this->faker->unique()->userName,
+            'telephone' => $this->faker->unique()->phoneNumber,
+            'adresse' => $this->faker->address,
+            'user_id' => null,  // à définir dans le seeder
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function wihoutCompte(): static
+    public function withUser()
     {
-        return $this->state(fn(array $attributes) => [
-            'user_id' => null,
-        ]);
+        return $this->afterMaking(function (Client $client) {
+            $client->user_id = User::factory()->client()->create()->id;
+        });
     }
 }

@@ -40,11 +40,16 @@ class Client extends Model
 
     /**
      * Relation Many-to-One avec User
-     * 
+     *
      * @return BelongsTo
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function dettes()
+    {
+        return $this->hasMany(Dette::class);
     }
 }
