@@ -18,7 +18,11 @@ class UserResource extends JsonResource
             'nom' => $this->nom,
             'prenom' => $this->prenom,
             'login' => $this->login,
-            'role' => $this->role
+            'active' => $this->active,
+            'photo' => $this->photo,
+            $this->mergeWhen($this->relationLoaded('role'), [
+                'role' => new RoleResource($this->role),
+            ]),
         ];
     }
 }

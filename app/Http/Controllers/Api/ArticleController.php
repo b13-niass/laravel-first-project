@@ -176,4 +176,5 @@ class ArticleController extends Controller
 
         return $this->sendResponse(StateEnum::SUCCESS, $result, 'Tous les articles ont été mis à jour avec succès.', Response::HTTP_OK);
     }
+
 }

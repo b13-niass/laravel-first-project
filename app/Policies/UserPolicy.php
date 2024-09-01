@@ -34,6 +34,14 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can create models.
+     */
+    public function isAdmin(User $user): bool
+    {
+        return $user->role->role === RoleEnum::ADMIN->value;
+    }
+
+    /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Role $role): bool

@@ -11,13 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1'], function () {
     // Routes pour les utilisateurs
     Route::group(['prefix' => 'users', 'as' => 'users.', 'middleware' => 'auth:api'], function () {
-        Route::get('/', function () {
-            $data = [
-                'message' => 'Liste des utilisateurs récupérée avec succès',
-                'data' => ['users' => User::all()]
-            ];
-            return response()->json($data, 200);
-        })->name('index'); // Alias: users.index
+        Route::get('/', [UserController::class, 'index'])->name('index'); // Alias: users.index
 
         Route::get('/{id}', function ($id) {
             $user = User::find($id);
