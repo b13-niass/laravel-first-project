@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\StateEnum;
+use App\Filters\ClientWithCompteActiveFilter;
+use App\Filters\ClientWithCompteFilter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientByPhoneRequest;
 use App\Http\Requests\ClientRequest;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -13,31 +17,41 @@ use App\Models\User;
 use App\Trait\ApiResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ClientController extends Controller
 {
     use ApiResponseTrait;
     public function index(Request $request)
     {
-        $queryParams = $request->query();
-        $sortBy = $queryParams['sort_by'] ?? 'created_at,asc';
-
-        $query = Client::filter($queryParams);
-
-        if ($request->has('sort_by') && $queryParams['sort_by'] !== '') {
-            $sortBy = $request->query('sort_by', 'created_at,asc');
-            list($attribute, $direction) = explode(',', $sortBy);
-            $query->orderBy($attribute, $direction);
+        $user = User::find(Auth::user()->id);
+        if (!Gate::allows("isBoutiquier", $user)){
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Vous n\'êtes pas authorisé à faire cette action', Response::HTTP_FORBIDDEN);
         }
 
-        if ($request->has('include') && $queryParams['include'] === 'user') {
-            $query->with('user');
+        $query = Client::query();
+
+        if ($request->has('compte')) {
+            $compte = $request->query('compte');
+            $query = (new ClientWithCompteFilter())($query, $compte, 'compte');
+        }
+        if ($request->has('active')) {
+            $active = $request->query('active');
+            $query = (new ClientWithCompteActiveFilter())($query, $active, 'active');
         }
 
-        $data = $query->get();
-        return $this->sendResponse('success', ClientResource::collection($data) , 'Liste des clients récupérée avec succès', 200);
+        $data= QueryBuilder::for($query)
+            ->get();
+
+        if (count($data) === 0) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Aucun client trouvé', Response::HTTP_NOT_FOUND);
+        }
+        return $this->sendResponse(StateEnum::SUCCESS, ClientResource::collection($data) , 'Liste des clients récupérée avec succès', Response::HTTP_OK);
     }
 
     public function show(Request $request, $id)
@@ -56,6 +70,23 @@ class ClientController extends Controller
 
         return $this->sendResponse('success', $client, 'Client récupéré avec succès', 200);
     }
+
+    public function showByPhone(ClientByPhoneRequest $request)
+    {
+        try {
+            $query = Client::query();
+
+            $telephone = $request->get('telephone');
+            $query->with('user');
+
+            $client = $query->where('telephone', $telephone)->firstOrFail();
+
+            return $this->sendResponse(StateEnum::SUCCESS, new ClientResource($client), 'Client récupéré avec succès', Response::HTTP_OK);
+        }catch (Exception $e) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Pas de client trouvé', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     public function store(StoreClientRequest $request)
     {
