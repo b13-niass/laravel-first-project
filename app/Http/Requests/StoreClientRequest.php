@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Rules\CustomPassword;
 use App\Rules\PhoneNumber;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator as Valid;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class StoreClientRequest extends FormRequest
@@ -20,7 +23,8 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize()
     {
-        return true; // Autorisation de validation
+        $user = User::find(Auth::user()->id);
+        return Gate::allows("isBoutiquier", $user);
     }
 
     /**
@@ -37,13 +41,13 @@ class StoreClientRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:clients,surnom,' . $id
+                'unique:clients,surnom'
             ],
             'telephone' => [
                 'required',
                 'string',
                 new PhoneNumber(),
-                'unique:clients,telephone,' . $id
+                'unique:clients,telephone'
             ],
             'adresse' => 'nullable|string|max:255',
             // Define 'user' object as optional
@@ -56,9 +60,10 @@ class StoreClientRequest extends FormRequest
                         $userValidator = Validator::make($value, [
                             'nom' => 'required|string|max:255',
                             'prenom' => 'required|string|max:255',
-                            'login' => 'required|string|unique:users,login|email',
-                            'role' => 'required|string|in:ADMIN,BOUTIQUIER', // Update roles as per your application
+                            'login' => 'required|string|unique:users,login',
+                            'active' => 'required|boolean',
                             'password' => ["required", "string","confirmed", new CustomPassword()], // Update password validation as needed
+                            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
                         ]);
 
                         // If validation fails, return the first error
@@ -81,17 +86,29 @@ class StoreClientRequest extends FormRequest
     public function messages()
     {
         return [
-            'surnom.required' => 'Le surnom est obligatoire.',
+            'surnom.required' => 'Le surnom est requis.',
             'surnom.string' => 'Le surnom doit être une chaîne de caractères.',
-            'surnom.max' => 'Le surnom ne doit pas dépasser 255 caractères.',
-            'surnom.unique' => 'Ce surnom est déjà pris.',
-
-            'telephone.required' => 'Le numéro de téléphone est obligatoire.',
-            'telephone.string' => 'Le numéro de téléphone doit être une chaîne de caractères.',
-            'telephone.phone_number' => "Le numéro de téléphone n'est pas correcte.",
-
+            'surnom.max' => 'Le surnom ne peut pas dépasser 255 caractères.',
+            'surnom.unique' => 'Le surnom existe déjà.',
             'adresse.string' => 'L’adresse doit être une chaîne de caractères.',
-            'adresse.max' => 'L’adresse ne doit pas dépasser 255 caractères.',
+            'adresse.max' => 'L’adresse ne peut pas dépasser 255 caractères.',
+            'telephone.required' => 'Le numéro de téléphone est requis.',
+            'telephone.unique' => 'Le numéro de téléphone existe déjà.',
+            'user.nom.required_with' => 'Le nom est requis lorsque l\'utilisateur est fourni.',
+            'user.nom.string' => 'Le nom doit être une chaîne de caractères.',
+            'user.prenom.required_with' => 'Le prénom est requis lorsque l\'utilisateur est fourni.',
+            'user.prenom.string' => 'Le prénom doit être une chaîne de caractères.',
+            'user.login.required_with' => 'Le login est requis lorsque l\'utilisateur est fourni.',
+            'user.login.string' => 'Le login doit être une chaîne de caractères.',
+            'user.login.email' => 'Le login doit être une adresse email valide.',
+            'user.login.unique' => 'Le login existe déjà.',
+            'user.active.required_with' => 'Le statut actif est requis lorsque l\'utilisateur est fourni.',
+            'user.active.boolean' => 'Le statut actif doit être un booléen.',
+            'user.password.required_with' => 'Le mot de passe est requis lorsque l\'utilisateur est fourni.',
+            'user.password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            'photo.image' => 'Le fichier doit être une image.',
+            'photo.mimes' => 'Le format de l\'image doit être JPG, JPEG, PNG ou GIF.',
+            'photo.max' => 'La taille de l\'image doit être inférieure à 2 Mo.',
         ];
     }
 
@@ -100,5 +117,28 @@ class StoreClientRequest extends FormRequest
         throw new HttpResponseException(
             $this->sendResponse('failed', $validator->errors(), 'Validation errors', 400)
         );
+    }
+
+    /**
+     * Prépare les données pour la validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+//        \Log::info('Request data before merging:', $this->all());
+        if ($this->has('user')) {
+            // Retrieve the existing 'user' data from the request or initialize as an empty array if not present
+            $userData = $this->input('user', []);
+
+            // Update or add the 'active' key, converting it to a boolean
+            $userData['active'] = filter_var($this->input('user.active', false), FILTER_VALIDATE_BOOLEAN);
+
+            // Merge the updated 'user' data back into the request
+            $this->merge([
+                'user' => $userData
+            ]);
+        }
+//        \Log::info('Request data after merging:', $this->all());
     }
 }

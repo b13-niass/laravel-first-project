@@ -130,4 +130,5 @@ class UserController extends Controller
 
         return $this->sendResponse('success', null, 'Utilisateur supprimé', 204);
     }
+
 }

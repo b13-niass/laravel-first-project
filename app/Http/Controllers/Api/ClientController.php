@@ -8,6 +8,7 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use App\Models\Role;
 use App\Models\User;
 use App\Trait\ApiResponseTrait;
 use Exception;
@@ -59,18 +60,29 @@ class ClientController extends Controller
     public function store(StoreClientRequest $request)
     {
         $validateData = $request->validated();
-
+//        dd($validateData);
         try {
             // Démarrer une transaction
             DB::beginTransaction();
-            $client = Client::create($validateData);
+            $clientData = [
+                'surnom' => $validateData['surnom'],
+                'telephone' => $validateData['telephone'],
+                'adresse' => $validateData['adresse']?? null
+            ];
+            $client = Client::create($clientData);
 
+//            dd($validateData['user']['photo']);
             if (isset($validateData['user'])) {
-                if ($validateData['user']['password'] !== $validateData['user']['confirm_password']) {
-                    DB::rollBack();
-                    return $this->sendResponse('failed', null, 'Erreur de confirmation du password', 411);
-                }
-                $user = User::create($validateData['user']);
+                $role = Role::where('role', 'CLIENT')->firstOrFail();
+                $file = $validateData['user']['photo'];
+                $imageName = time().'.'.$file->extension();
+                $file = $file->storeAs('images', $imageName, [
+                    'disk' => 'public'
+                ]);
+                $validateData['user']['photo'] = $imageName;
+                $user = User::make($validateData['user']);
+                $user->role()->associate($role);
+                $user->save();
                 if (!$user) {
                     DB::rollBack();
                 }
@@ -78,7 +90,7 @@ class ClientController extends Controller
                 $client->save();
             }
             DB::commit();
-            return $this->sendResponse('success', $client, 'Client créé avec succès', 201);
+            return $this->sendResponse('success', new ClientResource($client), 'Client créé avec succès', 201);
         } catch (Exception $e) {
             return $this->sendResponse('failed', null, 'Erreur lors de la transaction', 500);
         }
