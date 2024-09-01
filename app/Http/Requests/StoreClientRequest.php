@@ -58,7 +58,7 @@ class StoreClientRequest extends FormRequest
                             'prenom' => 'required|string|max:255',
                             'login' => 'required|string|unique:users,login|email',
                             'role' => 'required|string|in:ADMIN,BOUTIQUIER', // Update roles as per your application
-                            'password' => ["required", "string", new CustomPassword()], // Update password validation as needed
+                            'password' => ["required", "string","confirmed", new CustomPassword()], // Update password validation as needed
                         ]);
 
                         // If validation fails, return the first error

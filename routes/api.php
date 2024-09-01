@@ -8,9 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
+Route::group(['prefix' => 'v1'], function () {
     // Routes pour les utilisateurs
-    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
+    Route::group(['prefix' => 'users', 'as' => 'users.', 'middleware' => 'auth:api'], function () {
         Route::get('/', function () {
             $data = [
                 'message' => 'Liste des utilisateurs récupérée avec succès',
@@ -40,7 +40,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
     });
 
     // Routes pour les clients
-    Route::group(['prefix' => 'clients', 'as' => 'clients.'], function () {
+    Route::group(['prefix' => 'clients', 'as' => 'clients.', 'middleware' => 'auth:api'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
         Route::get('/{id}', [ClientController::class, 'show'])->name('show');
         Route::post('/', [ClientController::class, 'store'])->name('store');
@@ -48,12 +48,14 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
 
-    Route::group(['prefix' => 'articles', 'as' => 'articles.'], function () {
+    Route::group(['prefix' => 'articles', 'as' => 'articles.', 'middleware' => 'auth:api'], function () {
         Route::get('/', [ArticleController::class, 'index'])->name('index');
         Route::get('/{id}', [ArticleController::class, 'show'])->name('show');
+        Route::post('/libelle', [ArticleController::class, 'showByLibelle'])->name('showByLibelle');
         Route::post('/', [ArticleController::class, 'store'])->name('store');
-        Route::match(['put', 'patch'], '/{id}', [ArticleController::class, 'update'])->name('update');
+//        Route::match(['put', 'patch'], '/{id}', [ArticleController::class, 'update'])->name('update');
         Route::delete('/{id}', [ArticleController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}', [ArticleController::class, 'update'])->name('update');
         Route::post('/stock', [ArticleController::class, 'updateStock'])->name('update.stock');
         // Route pour restaurer un article soft-deleted
         Route::post('/{id}/restore', [ArticleController::class, 'restore']);
@@ -61,12 +63,12 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
         // Route pour supprimer définitivement un article
         Route::delete('/{id}/force-delete', [ArticleController::class, 'forceDelete']);
     });
+
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+    Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:api'])->name('auth.register');
+
+    Route::get('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('auth.refresh');
+    Route::get('/getAuthUser', [AuthController::class, 'getAuthenticatedUser'])->middleware('auth:api')->name('auth.getAuthenticatedUser');
+
 });
-
-Route::post('/v1/login', [AuthController::class, 'login'])->name('auth.login');
-Route::get('/v1/refresh', [AuthController::class, 'refresh'])->middleware('auth:sanctum');
-Route::get('/v1/getAuthUser', [AuthController::class, 'getAuthenticatedUser'])->middleware('auth:sanctum');
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');

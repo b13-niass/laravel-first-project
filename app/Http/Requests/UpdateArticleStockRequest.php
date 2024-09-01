@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Rules\ContainsValidObject;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateArticleStockRequest extends FormRequest
 {
@@ -16,7 +19,8 @@ class UpdateArticleStockRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = User::find(Auth::user()->id);
+        return Gate::allows("isBoutiquier", $user);
     }
 
     /**

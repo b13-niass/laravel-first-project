@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\StateEnum;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\CustomPassword;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,27 +24,23 @@ class UserController extends Controller
             'prenom' => 'required|string|max:100',
             'login' => 'required|unique:users,login|email',
             'role' => 'required|string',
-            'password' => ["required","string", new CustomPassword()],
-            'confirm_password' =>  'required|string'
+            'password' => ["required","string","confirmed", new CustomPassword()]
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json([
-                "message" => "Erreur de Validation",
-                "data" => $validator->errors()->toArray()
-            ], 422);
+            return $this->sendResponse(StateEnum::ECHEC->value, $validator->errors()->toArray(),"Erreur de Validation", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $validateData = $validator->validated();
 
-        if ($validateData['password'] !== $validateData['confirm_password']) {
-            return $this->sendResponse('failed', null, 'Erreur de confirmation du password', 411);
-        }
-
         $user = User::create($validateData);
-
+        $accessToken = $user->createToken('authToken')->accessToken;
+//        $data  = [
+//            'user' => $user,
+//            'accessToken' => $accessToken
+//        ];
         return $this->sendResponse('success', $user, 'Utilisateur crée', 200);
     }
 

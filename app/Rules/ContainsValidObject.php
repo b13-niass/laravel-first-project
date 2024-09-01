@@ -16,8 +16,9 @@ class ContainsValidObject implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+
         if (!is_array($value)) {
-            $fail("Le champ « $attribute » doit être un tableau.");
+            $fail("$attribute doit contenir au moins un objet avec un « id » et un « qte » valides.");
             return;
         }
 

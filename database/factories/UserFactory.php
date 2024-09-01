@@ -24,6 +24,7 @@ class UserFactory extends Factory
             'password' => 'password',
             'role_id' => null,
             'active' => true,
+            'photo' => null
         ];
     }
 

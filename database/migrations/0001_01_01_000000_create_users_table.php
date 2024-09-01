@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->integer('role_id');
             $table->boolean('active');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
 

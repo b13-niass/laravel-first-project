@@ -15,7 +15,7 @@ class CustomPassword implements ValidationRule
         $validator = Validator::make([$attribute => $value], [
             $attribute => [
                 'required',
-                Password::min(8) // Minimum length of 8 characters
+                Password::min(5) // Minimum length of 8 characters
                     ->letters() // Must include letters
                     ->mixedCase() // Must include mixed case letters
                     ->numbers() // Must include numbers

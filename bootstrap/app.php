@@ -35,4 +35,5 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['success' => 'failed', 'message' => 'Non authentifié', 'data' => null], 422);
             }
         });
+
     })->create();

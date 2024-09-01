@@ -2,15 +2,17 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StateEnum;
 use App\Models\User;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class UpdateArticleRequest extends FormRequest
+class ArticleByLibelleRequest extends FormRequest
 {
     use ApiResponseTrait;
     /**
@@ -30,23 +32,19 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'qte' => 'required|numeric|min:1'
+            'libelle' => 'required|string'
         ];
     }
-
-    public function messages()
-    {
+    public function messages(): array{
         return [
-            'qte.required' => 'Le champ qte est requis.',
-            'qte.numeric' => 'Le champ qte doit être un nombre.',
-            'qte.min' => 'Le champ qte doit être supérieur ou égal à 1.'
+            'libelle.required' => 'Le libelle est requis',
+            'libelle.string' => 'Le libelle doit être une chaîne de caractères'
         ];
     }
-
-    public function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse('failed', $validator->errors(), 'Validation errors', 400)
+            $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Erreur Validation', Response::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Rules\ContainsValidObject;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Passport::ignoreRoutes();
     }
 
     /**
@@ -19,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+//        // Set token expiration settings
+//        Passport::tokensExpireIn(now()->addMinutes(1)); // Access token expiry
+//        Passport::refreshTokensExpireIn(now()->addMinutes(1)); // Refresh token expiry
+//        Passport::personalAccessTokensExpireIn(now()->addMinutes(1)); // Personal access token expiry
+//        Validator::extend('contains_valid_object', ContainsValidObject::class);
+//        Rule::macro('uppercase',function () { return new Uppercase();  }
     }
 }
