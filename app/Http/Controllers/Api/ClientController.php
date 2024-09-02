@@ -11,6 +11,7 @@ use App\Http\Requests\ClientRequest;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\DetteResource;
 use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
@@ -54,21 +55,25 @@ class ClientController extends Controller
         return $this->sendResponse(StateEnum::SUCCESS, ClientResource::collection($data) , 'Liste des clients récupérée avec succès', Response::HTTP_OK);
     }
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        $query = Client::query();
+        try {
+            $client = Client::findOrFail($id);
+            $user = User::find(Auth::user()->id);
 
-        if ($request->has('include') && $request->query('include') === 'user') {
-            $query->with('user');
+//            dd(auth()->user()->can('view', $client));
+            if (!Gate::allows("view", $client)) {
+                return $this->sendResponse(StateEnum::ECHEC, null, 'Vous n\'êtes pas authorisé à faire cette action', Response::HTTP_FORBIDDEN);
+            }
+
+
+            $query = Client::query();
+//            $client = $query->findOrFail($id);
+//            $client->load('user');
+            return $this->sendResponse(StateEnum::SUCCESS, new ClientResource($client), 'Client trouve avec succès', Response::HTTP_OK);
+        }catch (\Exception $e) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Client introuvable', Response::HTTP_NOT_FOUND);
         }
-
-        $client = $query->find($id);
-
-        if (!$client) {
-            return $this->sendResponse('failed', null, 'Client introuvable', 404);
-        }
-
-        return $this->sendResponse('success', $client, 'Client récupéré avec succès', 200);
     }
 
     public function showByPhone(ClientByPhoneRequest $request)
@@ -87,6 +92,41 @@ class ClientController extends Controller
         }
     }
 
+    public function showWithUser($id)
+    {
+        $user = User::find(Auth::user()->id);
+        if (!Gate::allows("isBoutiquier", $user)) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Vous n\'êtes pas authorisé à faire cette action', Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $query = Client::query();
+            $client = $query->findOrFail($id);
+            $client->load('user');
+            return $this->sendResponse(StateEnum::SUCCESS, new ClientResource($client), 'Client trouve avec succès', Response::HTTP_OK);
+        }catch (\Exception $e) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Client introuvable', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function showDettesUser($id){
+        $user = User::find(Auth::user()->id);
+        if (!Gate::allows("isBoutiquier", $user)) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Vous n\'êtes pas authorisé à faire cette action', Response::HTTP_FORBIDDEN);
+        }
+
+        try {
+            $client = Client::findOrFail($id);
+            $dettes = $client->dettes;
+            if (count($dettes) === 0){
+                return $this->sendResponse(StateEnum::ECHEC, null, 'Aucune détte trouvée', Response::HTTP_NOT_FOUND);
+            }
+
+            return $this->sendResponse(StateEnum::SUCCESS, DetteResource::collection($dettes), 'Liste des clients déttes récupérée avec succès', Response::HTTP_OK);
+        }catch (\Exception $e) {
+            return $this->sendResponse(StateEnum::ECHEC, null, 'Erreur lors de la récupération des déttes', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public function store(StoreClientRequest $request)
     {

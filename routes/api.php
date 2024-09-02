@@ -37,6 +37,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'clients', 'as' => 'clients.', 'middleware' => 'auth:api'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
         Route::get('/{id}', [ClientController::class, 'show'])->name('show');
+        Route::get('/{id}/user', [ClientController::class, 'showWithUser'])->name('showWithUser');
+        Route::get('/{id}/dettes', [ClientController::class, 'showDettesUser'])->name('showDettesUser');
         Route::post('/telephone', [ClientController::class, 'showByPhone'])->name('showByPhone');
         Route::post('/', [ClientController::class, 'store'])->name('store');
         Route::match(['put', 'patch'], '/{id}', [ClientController::class, 'update'])->name('update');
