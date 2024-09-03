@@ -20,14 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
-        // $middleware->append(HealthCheck::class);
-        // $middleware->web(append: Middleware::class);
-        // $middleware->web(replace: [Middleware::class => $middleware::class]);
-        // $middleware->web(remove: Middleware::class);
-        // $middleware->alias([
-        //     'authMy' => Middleware::class
-        // ]);
+         $middleware->alias([
+             'api.format.response' => \App\Http\Middleware\FormatResponse::class
+         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (RouteNotFoundException $e, Request $request) {

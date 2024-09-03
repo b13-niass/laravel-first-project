@@ -1,0 +1,17 @@
+Auth:
+  App\Services\Interfaces\AuthenticationServiceInterface:
+    - App\Services\AuthenticationPassport
+
+App:
+  App\Repositories\Interfaces\ArticleRepository:
+      - App\Repositories\ArticleRepositoryImpl
+  App\Services\Interfaces\ArticleService:
+      - App\Services\ArticleServiceImpl
+  App\Repositories\Interfaces\ClientRepository:
+      - App\Repositories\ClientRepositoryImpl
+  App\Services\Interfaces\ClientService:
+      - App\Services\ClientServiceImpl
+  clientrepositoryfacade:
+      - App\Repositories\ClientRepositoryImpl
+  clientservicefacade:
+      - App\Services\ClientServiceImpl

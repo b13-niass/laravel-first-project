@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use App\Enums\StateEnum;
 use App\Http\Resources\ClientResource;
@@ -19,7 +19,6 @@ class AuthService {
     {
         try {
             $imageName = time().'.'.$request->photo->extension();
-//            $request->photo->move(public_path('images'), $imageName);
             $file = $request->photo->storeAs('images', $imageName, [
                 'disk' => 'public'
             ]);
@@ -33,23 +32,7 @@ class AuthService {
                 'password' => $data['password'],
             ];
 
-            DB::beginTransaction();
 
-            $user = User::create($userData);
-
-            if (!$user){
-                DB::rollBack();
-                return $this->sendResponse(StateEnum::ECHEC, $data, 'Erreur lors de la création', Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-            $client = Client::find($data['client_id']);
-            $client->user()->associate($user);
-            $client->save();
-
-            DB::commit();
-            $result = [
-                'user' => new UserResource($user),
-                'client' => new ClientResource($client)
-            ];
             return $this->sendResponse(StateEnum::SUCCESS, $result, 'Compte client Ajouter', Response::HTTP_OK);
         }catch (Exception $e) {
             DB::rollBack();

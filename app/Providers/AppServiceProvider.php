@@ -3,10 +3,13 @@
 namespace App\Providers;
 
 use App\Rules\ContainsValidObject;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Symfony\Component\Yaml\Yaml;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +19,13 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Passport::ignoreRoutes();
+
+        $yaml = Yaml::parse(file_get_contents(base_path('services.yaml')));
+        foreach ($yaml['App'] as $key => $value) {
+            $bind = $value[0];
+//            Log::info([$key, $bind]);
+            $this->app->singleton($key, $bind);
+        }
     }
 
     /**

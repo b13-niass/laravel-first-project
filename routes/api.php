@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'v1'], function () {
+Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function () {
     // Routes pour les utilisateurs
     Route::group(['prefix' => 'users', 'as' => 'users.', 'middleware' => 'auth:api'], function () {
         Route::get('/', [UserController::class, 'index'])->name('index'); // Alias: users.index
@@ -63,9 +63,13 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-    Route::post('/register', [AuthController::class, 'register'])->middleware(['auth:api'])->name('auth.register');
+    Route::post('/register', [ClientController::class, 'register'])->middleware(['auth:api'])->name('auth.register');
 
     Route::get('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('auth.refresh');
     Route::get('/getAuthUser', [AuthController::class, 'getAuthenticatedUser'])->middleware('auth:api')->name('auth.getAuthenticatedUser');
 
+//    Route::get('/teste', function (Request $request){
+//        $data = 2;
+//        return response()->json(compact('data'), 404);
+//    });
 });

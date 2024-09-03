@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Enums\StateEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountForClientRequest;
-use App\Http\Services\AuthService;
+use App\Services\Interfaces\AuthenticationServiceInterface;
+use App\Services\AuthService;
 use App\Models\User;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class AuthController extends Controller
 {
 
     protected $authService;
-    public function __construct(AuthService $authService)
+    public function __construct(AuthService $authService, private AuthenticationServiceInterface $authServiceInterface)
     {
         $this->authService = $authService;
     }
@@ -31,38 +32,14 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validate the request data
-
         $request->validate([
             'login' => 'required|string',
             'password' => 'required|string',
         ]);
 
         $credentials = $request->only('login', 'password');
-
-        if (!Auth::attempt($credentials)) {
-            return $this->sendResponse(StateEnum::ECHEC, null, 'Non Authorizé', Response::HTTP_UNAUTHORIZED);
-        }
-
-        $user = User::find(Auth::user()->id);
-
-        if (!$user->active) {
-            return $this->sendResponse(StateEnum::ECHEC, null, 'Utilisateur désactivé', Response::HTTP_UNAUTHORIZED);
-        }
-
-        // Revoke all existing tokens for the user
-        $user->tokens->each(function ($token) {
-            $token->revoke();
-        });
-
-        $accessToken = $user->createToken('authToken')->accessToken;
-
-        $data = [
-            'access_token' => $accessToken,
-            'token_type' => 'Bearer',
-        ];
-        return $this->sendResponse(StateEnum::SUCCESS, $data, 'Connection réussi', Response::HTTP_OK);
-
+        $data = $this->authServiceInterface->authenticate($credentials);
+        return compact('data');
     }
 
     public function refresh(Request $request)
