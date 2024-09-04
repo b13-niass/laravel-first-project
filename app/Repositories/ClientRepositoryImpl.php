@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Enums\StateEnum;
+use App\Facades\UploadFacade;
 use App\Filters\ClientWithCompteActiveFilter;
 use App\Filters\ClientWithCompteFilter;
 use App\Http\Resources\ClientResource;
@@ -51,15 +52,19 @@ class ClientRepositoryImpl implements ClientRepository
         ];
         $client = Client::create($clientData);
 
-//            dd($validateData['user']['photo']);
+//            dd($client);
         if (isset($data['user'])) {
             $role = Role::where('role', 'CLIENT')->firstOrFail();
             $file = $data['user']['photo'];
             $imageName = time().'.'.$file->extension();
-            $file = $file->storeAs('images', $imageName, [
-                'disk' => 'public'
-            ]);
-            $data['user']['photo'] = $imageName;
+//            $file = $file->storeAs('images', $imageName, [
+//                'disk' => 'public'
+//            ]);
+            if(!UploadFacade::upload($file)){
+                return null;
+            }
+//            dd($client);
+            $data['user']['photo'] = storage_path().'/images/'.$imageName;
             $user = User::make($data['user']);
             $user->role()->associate($role);
             $user->save();

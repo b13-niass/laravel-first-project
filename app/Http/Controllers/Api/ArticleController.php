@@ -2,25 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\StateEnum;
-use App\Filters\QuantityFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleByLibelleRequest;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Requests\UpdateArticleStockRequest;
-use App\Http\Resources\ArticleResource;
-use App\Models\Article;
-use App\Models\User;
 use App\Services\Interfaces\ArticleService;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ArticleController extends Controller
 {

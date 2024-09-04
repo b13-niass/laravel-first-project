@@ -6,7 +6,6 @@ use App\Enums\StateEnum;
 use App\Enums\UserRole;
 use App\Filters\ActiveFilter;
 use App\Filters\IncludeRoleFilter;
-use App\Filters\QuantityFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;

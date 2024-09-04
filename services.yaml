@@ -15,3 +15,5 @@ App:
       - App\Repositories\ClientRepositoryImpl
   clientservicefacade:
       - App\Services\ClientServiceImpl
+  uploadphoto:
+    - App\Services\UploadServiceImpl

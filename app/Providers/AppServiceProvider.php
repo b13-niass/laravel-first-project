@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\CustomPersonalAccessToken;
 use App\Rules\ContainsValidObject;
+use App\Services\CustomAccessToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Passport;
 use Symfony\Component\Yaml\Yaml;
 
@@ -26,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
 //            Log::info([$key, $bind]);
             $this->app->singleton($key, $bind);
         }
+
     }
 
     /**

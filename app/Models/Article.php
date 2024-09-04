@@ -43,13 +43,11 @@ class Article extends Model
      */
     public function scopeFilter(Builder $query, $request)
     {
-        // Apply the 'disponible' filter using the custom QuantityFilter
         if ($request->has('disponible')) {
             $disponible = $request->query('disponible');
             $query = (new QuantityFilter())($query, $disponible, 'disponible');
         }
 
-        // Use Spatie's QueryBuilder to handle other allowed filters
         $query = QueryBuilder::for($query)
             ->allowedFilters(['libelle']);
 

@@ -14,6 +14,7 @@ use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Interfaces\ClientService;
+use App\Trait\MyImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Log;
 
 class ClientServiceImpl implements ClientService
 {
-
+    use MyImageTrait;
     public function all(Request $request)
     {
         $user = User::find(Auth::user()->id);
@@ -89,8 +90,9 @@ class ClientServiceImpl implements ClientService
             $telephone = $request->get('telephone');
 
            $client = ClientRepositoryFacade::findByPhone($telephone);
-
-            return new ClientResource($client);
+           $clientResource = new ClientResource($client);
+           $clientResource->user->photo = $this->getImageAsBase64($clientResource->user->photo);
+            return $clientResource;
         }catch (Exception $e) {
             return null;
         }

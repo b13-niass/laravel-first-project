@@ -63,7 +63,7 @@ class StoreClientRequest extends FormRequest
                             'login' => 'required|string|unique:users,login',
                             'active' => 'required|boolean',
                             'password' => ["required", "string","confirmed", new CustomPassword()], // Update password validation as needed
-                            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                            'photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:40'
                         ]);
 
                         // If validation fails, return the first error
@@ -108,7 +108,7 @@ class StoreClientRequest extends FormRequest
             'user.password.confirmed' => 'Les mots de passe ne correspondent pas.',
             'photo.image' => 'Le fichier doit être une image.',
             'photo.mimes' => 'Le format de l\'image doit être JPG, JPEG, PNG ou GIF.',
-            'photo.max' => 'La taille de l\'image doit être inférieure à 2 Mo.',
+            'photo.max' => 'La taille de l\'image doit être inférieure à 40Ko.',
         ];
     }
 

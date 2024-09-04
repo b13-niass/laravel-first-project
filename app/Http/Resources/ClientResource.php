@@ -20,7 +20,7 @@ class ClientResource extends JsonResource
             'adresse' => $this->adresse,
             'user' => $this->whenLoaded('user', function () {
                 return new UserResource($this->user);
-            }),
+            })
         ];
     }
 }
