@@ -17,6 +17,7 @@ class ClientFactory extends Factory
             'telephone' => $this->faker->unique()->phoneNumber,
             'adresse' => $this->faker->address,
             'user_id' => null,  // à définir dans le seeder
+            'qrcode' => null
         ];
     }
 

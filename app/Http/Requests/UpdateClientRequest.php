@@ -44,6 +44,7 @@ class UpdateClientRequest extends FormRequest
                 'unique:clients,telephone,' . $id
             ],
             'adresse' => 'nullable|string|max:255',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:40'
         ];
 
         return $rules;

@@ -12,13 +12,13 @@ use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
 use App\Repositories\Interfaces\ClientRepository;
+use App\Trait\MyImageTrait;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ClientRepositoryImpl implements ClientRepository
 {
-
     public function all($request)
     {
         $query = Client::query();
@@ -51,20 +51,14 @@ class ClientRepositoryImpl implements ClientRepository
             'adresse' => $data['adresse']?? null
         ];
         $client = Client::create($clientData);
-
-//            dd($client);
         if (isset($data['user'])) {
             $role = Role::where('role', 'CLIENT')->firstOrFail();
             $file = $data['user']['photo'];
-            $imageName = time().'.'.$file->extension();
-//            $file = $file->storeAs('images', $imageName, [
-//                'disk' => 'public'
-//            ]);
-            if(!UploadFacade::upload($file)){
+            $imageName = UploadFacade::upload($file);
+            if(!$imageName){
                 return null;
             }
-//            dd($client);
-            $data['user']['photo'] = storage_path().'/images/'.$imageName;
+            $data['user']['photo'] ='images/'.$imageName;
             $user = User::make($data['user']);
             $user->role()->associate($role);
             $user->save();
@@ -131,13 +125,14 @@ class ClientRepositoryImpl implements ClientRepository
             DB::rollBack();
             return $allData;
         }
+
         $client = Client::find($allData['client_id']);
         $client->user()->associate($user);
         $client->save();
 
         DB::commit();
         $result = [
-            'user' => new UserResource($user),
+//            'user' => new UserResource($user),
             'client' => new ClientResource($client)
         ];
 

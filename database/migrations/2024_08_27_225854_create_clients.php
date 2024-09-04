@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('surnom')->unique();
             $table->string('telephone')->unique();
             $table->string('adresse')->nullable();
+            $table->string('qrcode')->nullable();
             $table->foreignId('user_id')->unique()->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });

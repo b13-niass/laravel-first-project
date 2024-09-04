@@ -17,7 +17,6 @@ class AuthCustomServiceProvider extends ServiceProvider
         $yaml = Yaml::parse(file_get_contents(base_path('services.yaml')));
         foreach ($yaml['Auth'] as $key => $value) {
             $bind = $value[0];
-//            Log::info([$key, $bind]);
             $this->app->singleton($key, function (Application $app) use ($bind) {
                 return new $bind();
             });

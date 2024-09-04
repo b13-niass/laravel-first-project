@@ -13,7 +13,7 @@ class UploadServiceImpl implements UploadService
             $file->storeAs('images', $imageName, [
                 'disk' => 'public'
             ]);
-            return true;
+            return $imageName;
         }catch (\Exception $e){
             return false;
         }

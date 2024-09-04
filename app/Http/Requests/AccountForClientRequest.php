@@ -54,7 +54,7 @@ class AccountForClientRequest extends FormRequest
             'role_id' => 'required|numeric|exists:clients,id', // Update roles as per your application
             'active' => 'required|boolean',
             'client_id' => 'required|numeric|exists:clients,id',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:40',
             'password' => ["required", "string","confirmed", new CustomPassword()], // Update password validation as needed
         ];
     }
@@ -76,7 +76,7 @@ class AccountForClientRequest extends FormRequest
             'client_id.exists' => "Ce client n'existe pas",
             'photo.required' => 'Le photo est obligatoire',
             'photo.image' => 'Le format de la photo doit être une image',
-            'photo.mimes' => 'Le format de la photo doit être jpeg, png, jpg, gif',
+            'photo.mimes' => 'Le format de la photo doit être jpeg, png, jpg, svg',
             'photo.max' => 'La taille de la photo ne doit pas dépasser',
             'password.required' => 'Le mot de passe est obligatoire',
             'password.string' => 'Le mot de passe doit être une chaîne de caractères',

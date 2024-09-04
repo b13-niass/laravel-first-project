@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('login')->unique();
             $table->string('password');
             $table->integer('role_id');
+            $table->string('photo');
             $table->boolean('active');
-            $table->string('photo')->nullable();
             $table->timestamps();
         });
 

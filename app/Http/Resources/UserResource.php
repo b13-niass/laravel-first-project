@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Trait\MyImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    use MyImageTrait;
     /**
      * Transform the resource into an array.
      *
@@ -19,7 +21,7 @@ class UserResource extends JsonResource
             'prenom' => $this->prenom,
             'login' => $this->login,
             'active' => $this->active,
-            'photo' => $this->photo,
+            'photo' => $this->getImageAsBase64($this->photo),
             $this->mergeWhen($this->relationLoaded('role'), [
                 'role' => new RoleResource($this->role),
             ]),

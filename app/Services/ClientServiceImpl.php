@@ -4,7 +4,9 @@ namespace App\Services;
 
 
 use App\Enums\StateEnum;
+use App\Facades\CarteFacade;
 use App\Facades\ClientRepositoryFacade;
+use App\Facades\UploadFacade;
 use App\Http\Requests\AccountForClientRequest;
 use App\Http\Requests\ClientByPhoneRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -58,7 +60,19 @@ class ClientServiceImpl implements ClientService
     public function create($data)
     {
         try {
-            $client = ClientRepositoryFacade::create($data);
+//            $client = ClientRepositoryFacade::create($data);
+            $client = Client::with('user')->where('id',39)->firstOrFail();
+//            dd($client);
+            if ($client){
+                $qrcode = $this->generateQrcode($client->id);
+//                dd($qrcode);
+                $data = [
+                    'qrcode' => $qrcode,
+                    'client' => $client
+                ];
+                dd(CarteFacade::format($data));
+            }
+
             return new ClientResource($client);
         } catch (Exception $e) {
             return null;
@@ -90,9 +104,7 @@ class ClientServiceImpl implements ClientService
             $telephone = $request->get('telephone');
 
            $client = ClientRepositoryFacade::findByPhone($telephone);
-           $clientResource = new ClientResource($client);
-           $clientResource->user->photo = $this->getImageAsBase64($clientResource->user->photo);
-            return $clientResource;
+            return new ClientResource($client);
         }catch (Exception $e) {
             return null;
         }
@@ -135,16 +147,16 @@ class ClientServiceImpl implements ClientService
     {
         try {
             $imageName = time().'.'.$request->photo->extension();
-            $file = $request->photo->storeAs('images', $imageName, [
-                'disk' => 'public'
-            ]);
+            if(!UploadFacade::upload($request->photo)){
+                return null;
+            }
             $userData = [
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
                 'login' => $data['login'],
                 'role_id' => $data['role_id'],
                 'active' => $data['active'],
-                'photo' => $imageName,
+                'photo' => '/images/'.$imageName,
                 'password' => $data['password'],
             ];
 

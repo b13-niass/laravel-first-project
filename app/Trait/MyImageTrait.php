@@ -2,6 +2,10 @@
 
 namespace App\Trait;
 
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Illuminate\Support\Facades\Storage;
 
 trait MyImageTrait
@@ -18,4 +22,14 @@ trait MyImageTrait
 
         return $dataUri;
     }
+
+    public function generateQrcode($id){
+        $renderer = new ImageRenderer(
+            new RendererStyle(400),
+            new ImagickImageBackEnd()
+        );
+        $writer = new Writer($renderer);
+        return $writer->writeString($id);
+    }
+
 }

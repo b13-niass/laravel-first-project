@@ -17,3 +17,5 @@ App:
       - App\Services\ClientServiceImpl
   uploadphoto:
     - App\Services\UploadServiceImpl
+  carte:
+    - App\Services\CartePDFServiceImpl

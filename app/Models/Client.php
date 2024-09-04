@@ -23,7 +23,8 @@ class Client extends Model
         'surnom',
         'telephone',
         'adresse',
-        'user_id'
+        'user_id',
+        'qrcode'
     ];
 
     /**
@@ -54,6 +55,12 @@ class Client extends Model
     public function dettes()
     {
         return $this->hasMany(Dette::class);
+    }
+
+    // Définir un attribut transient
+    public function getPhoto()
+    {
+        return 'images/profile.jpg';
     }
 
     /**

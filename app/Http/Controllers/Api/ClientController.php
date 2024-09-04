@@ -44,10 +44,13 @@ class ClientController extends Controller
         return compact('data');
     }
 
-    public function store(StoreClientRequest $request)
+//    public function store(StoreClientRequest $request)
+    public function store(Request $request)
     {
-        $validateData = $request->validated();
-        $data = ClientServiceFacade::create($validateData);
+//        $validateData = $request->validated();
+//        $data = ClientServiceFacade::create($validateData);
+        $data = ClientServiceFacade::create($request->all());
+
         return compact('data');
     }
 
