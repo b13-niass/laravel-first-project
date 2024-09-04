@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Enums\StateEnum;
+use App\Events\FidelityCardCreated;
 use App\Facades\CarteFacade;
 use App\Facades\ClientRepositoryFacade;
 use App\Facades\UploadFacade;
@@ -12,6 +13,7 @@ use App\Http\Requests\ClientByPhoneRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\DetteResource;
+use App\Mail\CarteMail;
 use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ClientServiceImpl implements ClientService
 {
@@ -60,17 +63,19 @@ class ClientServiceImpl implements ClientService
     public function create($data)
     {
         try {
-//            $client = ClientRepositoryFacade::create($data);
-            $client = Client::with('user')->where('id',39)->firstOrFail();
-//            dd($client);
+            $client = ClientRepositoryFacade::create($data);
+//            $client = Client::with('user')->where('id',39)->firstOrFail();
             if ($client){
-                $qrcode = $this->generateQrcode($client->id);
-//                dd($qrcode);
+                $qrcode = base64_encode($this->generateQrcode($client->id));
+
                 $data = [
                     'qrcode' => $qrcode,
                     'client' => $client
                 ];
-                dd(CarteFacade::format($data));
+                $path = CarteFacade::format($data);
+//                dd($path);
+//                $path = "/var/www/html/caspratique/storage/app/public/carte/my_pdf_file.pdf";
+                event(new FidelityCardCreated($client,$path));
             }
 
             return new ClientResource($client);

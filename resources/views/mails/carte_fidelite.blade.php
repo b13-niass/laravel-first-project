@@ -115,7 +115,7 @@
 
     <!-- Avatar -->
     <div class="avatar">
-        <img src="https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp" alt="Profile photo of Seydina Mouhammad Diop">
+        <img src="{{$photo}}" alt="Profile photo of Seydina Mouhammad Diop">
     </div>
 
     <!-- Client name -->
@@ -125,7 +125,7 @@
 
     <!-- QR Code -->
     <div class="qr-code">
-        <img src="" alt="">
+        <img src="data:image/png;base64,{{ $qrcode }}" alt="">
     </div>
 </div>
 </body>

@@ -43,7 +43,7 @@ class CarteMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.mails.texte',
+            view: 'mails.texte',
         );
     }
 
