@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'prenom' => $this->prenom,
             'login' => $this->login,
             'active' => $this->active,
-            'photo' => $this->getImageAsBase64($this->photo),
+            'photo' => $this->getImageLocalAsBase64($this->photo),
             $this->mergeWhen($this->relationLoaded('role'), [
                 'role' => new RoleResource($this->role),
             ]),

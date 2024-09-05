@@ -16,6 +16,6 @@ App:
   clientservicefacade:
       - App\Services\ClientServiceImpl
   uploadphoto:
-    - App\Services\UploadServiceImpl
+    - App\Services\UploadToS3ServiceImpl
   carte:
     - App\Services\CartePDFServiceImpl

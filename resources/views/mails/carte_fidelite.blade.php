@@ -107,8 +107,8 @@
 <!-- Carte de fidélité -->
 <div class="card">
     <!-- Corrected asset paths -->
-<!--    <img id="pattern1" src="{{ asset('carte/pattern-waves.svg') }}" alt="Pattern waves background">-->
-<!--    <img id="pattern2" src="{{ asset('carte/flat-geometric-background_23-2148948420-removebg-preview.svg') }}" alt="Geometric background">-->
+<!--    <img id="pattern1" src="{{ $svg2 }}" alt="Pattern waves background">-->
+<!--    <img id="pattern2" src="{{ $svg2}}" alt="Geometric background">-->
 
     <!-- Titre de la carte -->
     <span>Carte De Fidélité</span>

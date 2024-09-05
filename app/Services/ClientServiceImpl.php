@@ -64,7 +64,6 @@ class ClientServiceImpl implements ClientService
     {
         try {
             $client = ClientRepositoryFacade::create($data);
-//            $client = Client::with('user')->where('id',39)->firstOrFail();
             if ($client){
                 $qrcode = base64_encode($this->generateQrcode($client->id));
 
@@ -72,9 +71,9 @@ class ClientServiceImpl implements ClientService
                     'qrcode' => $qrcode,
                     'client' => $client
                 ];
+
                 $path = CarteFacade::format($data);
-//                dd($path);
-//                $path = "/var/www/html/caspratique/storage/app/public/carte/my_pdf_file.pdf";
+
                 event(new FidelityCardCreated($client,$path));
             }
 
@@ -151,17 +150,21 @@ class ClientServiceImpl implements ClientService
     public function register(array $data, AccountForClientRequest $request)
     {
         try {
-            $imageName = time().'.'.$request->photo->extension();
-            if(!UploadFacade::upload($request->photo)){
+//            dd($request->photo);
+            $imageName = UploadFacade::upload($request->photo);
+                
+            if(!$imageName){
                 return null;
             }
+
+//            dd($imageName);
             $userData = [
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
                 'login' => $data['login'],
                 'role_id' => $data['role_id'],
                 'active' => $data['active'],
-                'photo' => '/images/'.$imageName,
+                'photo' => $imageName,
                 'password' => $data['password'],
             ];
 
