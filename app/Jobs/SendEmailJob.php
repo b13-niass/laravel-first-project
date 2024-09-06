@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -16,8 +17,8 @@ use Illuminate\Support\Facades\Mail;
 class SendEmailJob implements ShouldQueue
 {
     use Queueable, MyImageTrait;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $client;
-    public $filePath;
     /**
      * Create a new job instance.
      */
@@ -31,15 +32,16 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $qrcode = base64_encode($this->generateQrcode($this->client->id));
+            $qrcode = base64_encode($this->generateQrcode($this->client->id));
 
-        $data = [
-            'qrcode' => $qrcode,
-            'client' => $this->client
-        ];
+            $data = [
+                'qrcode' => $qrcode,
+                'client' => $this->client
+            ];
 
-        $path = CarteFacade::format($data);
-        Log::info($path);
-        Mail::to($this->client->user->login)->send(new CarteMail($path));
+            $path = CarteFacade::format($data);
+//            Log::info([__LINE__,$path]);
+            Mail::to($this->client->user->login)->send(new CarteMail($path));
     }
+
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('login')->unique();
             $table->string('password');
             $table->integer('role_id');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->boolean('active');
             $table->timestamps();
         });

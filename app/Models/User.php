@@ -26,6 +26,8 @@ class User extends Authenticatable
         'password',
         'active',
         'photo',
+        'photo_remote',
+        'remote',
         'role_id'
     ];
 

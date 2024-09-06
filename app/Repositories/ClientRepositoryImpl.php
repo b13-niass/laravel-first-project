@@ -50,17 +50,12 @@ class ClientRepositoryImpl implements ClientRepository
             'telephone' => $data['telephone'],
             'adresse' => $data['adresse']?? null
         ];
-        $client = Client::create($clientData);
+        $client = Client::make($clientData);
+//        dd( $data['user']['photo']);
+        $client->setTransientAttribute('file', $data['user']['photo']);
+        $client->save();
         if (isset($data['user'])) {
             $role = Role::where('role', 'CLIENT')->firstOrFail();
-            $file = $data['user']['photo'];
-
-            $imageName = UploadFacade::upload($file);
-
-            if(!$imageName){
-                return null;
-            }
-            $data['user']['photo'] ='images/'.$imageName;
             $user = User::make($data['user']);
             $user->role()->associate($role);
             $user->save();

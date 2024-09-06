@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\FidelityCardCreated;
+use App\Events\ClientCreated;
 use App\Jobs\SendEmailJob;
 use App\Mail\CarteMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,7 +22,7 @@ class SendFidelityCardEmail
     /**
      * Handle the event.
      */
-    public function handle(FidelityCardCreated $event): void
+    public function handle(ClientCreated $event): void
     {
         dispatch(new SendEmailJob($event->client));
     }

@@ -4,7 +4,7 @@ namespace App\Services;
 
 
 use App\Enums\StateEnum;
-use App\Events\FidelityCardCreated;
+use App\Events\ClientCreated;
 use App\Facades\CarteFacade;
 use App\Facades\ClientRepositoryFacade;
 use App\Facades\UploadFacade;
@@ -64,9 +64,6 @@ class ClientServiceImpl implements ClientService
     {
         try {
             $client = ClientRepositoryFacade::create($data);
-////                DB::rollBack();
-//            }
-
             return new ClientResource($client);
         } catch (Exception $e) {
             return null;
