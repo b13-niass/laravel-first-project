@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ClientServiceImpl implements ClientService
 {
-    use MyImageTrait;
+
     public function all(Request $request)
     {
         $user = User::find(Auth::user()->id);
@@ -64,18 +64,8 @@ class ClientServiceImpl implements ClientService
     {
         try {
             $client = ClientRepositoryFacade::create($data);
-            if ($client){
-                $qrcode = base64_encode($this->generateQrcode($client->id));
-
-                $data = [
-                    'qrcode' => $qrcode,
-                    'client' => $client
-                ];
-
-                $path = CarteFacade::format($data);
-
-                event(new FidelityCardCreated($client,$path));
-            }
+////                DB::rollBack();
+//            }
 
             return new ClientResource($client);
         } catch (Exception $e) {
@@ -152,7 +142,7 @@ class ClientServiceImpl implements ClientService
         try {
 //            dd($request->photo);
             $imageName = UploadFacade::upload($request->photo);
-                
+
             if(!$imageName){
                 return null;
             }

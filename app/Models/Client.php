@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Models\Scopes\ClientTelephoneScope;
+use App\Observers\ClientObserver;
 use EloquentFilter\Filterable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 //#[ScopedBy([ClientTelephoneScope::class])]
+#[ObservedBy([ClientObserver::class])]
 class Client extends Model
 {
     use HasFactory, Filterable;

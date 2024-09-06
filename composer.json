@@ -7,8 +7,10 @@
     "require": {
         "php": "^8.2",
         "bacon/bacon-qr-code": "^3.0",
+        "barryvdh/laravel-dompdf": "^3.0",
         "endroid/qr-code": "^5.0",
         "laravel/framework": "^11.9",
+        "laravel/horizon": "^5.28",
         "laravel/passport": "^12.3",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.2",
@@ -16,6 +18,7 @@
         "lcobucci/jwt": "^5.3",
         "league/flysystem-aws-s3-v3": "^3.0",
         "mpdf/mpdf": "^8.2",
+        "predis/predis": "^2.0",
         "spatie/laravel-query-builder": "^6.0",
         "symfony/yaml": "^7.1",
         "tecnickcom/tcpdf": "^6.7",

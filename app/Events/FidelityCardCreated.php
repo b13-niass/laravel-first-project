@@ -24,10 +24,9 @@ class FidelityCardCreated
      * @param Client $client
      * @return void
      */
-    public function __construct(Client $client, $path)
+    public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->path = $path;
     }
 
     /**

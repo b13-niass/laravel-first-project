@@ -54,7 +54,9 @@ class ClientRepositoryImpl implements ClientRepository
         if (isset($data['user'])) {
             $role = Role::where('role', 'CLIENT')->firstOrFail();
             $file = $data['user']['photo'];
+
             $imageName = UploadFacade::upload($file);
+
             if(!$imageName){
                 return null;
             }

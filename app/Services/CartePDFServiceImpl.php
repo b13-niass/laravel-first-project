@@ -17,7 +17,7 @@ class CartePDFServiceImpl implements  CarteService
 //        $svg2 = $this->svgToBase64(public_path('carte/pattern-waves.svg'));
         $photo = $this->getImageLocalAsBase64($client->user->photo);
         $qrcode = $data['qrcode'];
-        $html = view('mails.carte_fidelite', compact('client', 'qrcode','photo'))->render();
+        $html = view('mails.carte_fidelite_client', compact('client', 'qrcode','photo'))->render();
         $mpdf = new Mpdf();
         $mpdf->SetDisplayMode('fullpage');
         $mpdf->WriteHTML($html);

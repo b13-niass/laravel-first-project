@@ -106,10 +106,6 @@
 <body>
 <!-- Carte de fidélité -->
 <div class="card">
-    <!-- Corrected asset paths -->
-<!--    <img id="pattern1" src="{{ $svg2 }}" alt="Pattern waves background">-->
-<!--    <img id="pattern2" src="{{ $svg2}}" alt="Geometric background">-->
-
     <!-- Titre de la carte -->
     <span>Carte De Fidélité</span>
 

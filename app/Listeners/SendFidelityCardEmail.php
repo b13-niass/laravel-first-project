@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\FidelityCardCreated;
+use App\Jobs\SendEmailJob;
 use App\Mail\CarteMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,7 +16,7 @@ class SendFidelityCardEmail
      */
     public function __construct()
     {
-        //
+
     }
 
     /**
@@ -23,7 +24,6 @@ class SendFidelityCardEmail
      */
     public function handle(FidelityCardCreated $event): void
     {
-        $path = $event->path;
-        Mail::to($event->client->user->login)->send(new CarteMail($path));
+        dispatch(new SendEmailJob($event->client));
     }
 }
