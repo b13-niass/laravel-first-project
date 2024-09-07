@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dettes', function (Blueprint $table) {
+        Schema::create('paiements', function (Blueprint $table) {
             $table->id();
             $table->decimal('montant', 10, 2);
-            $table->foreignId('client_id')->constrained('clients')->onDelete('set null');
+            $table->foreignId('dette_id')->constrained('dettes')->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dettes');
+        Schema::dropIfExists('paiements');
     }
 };

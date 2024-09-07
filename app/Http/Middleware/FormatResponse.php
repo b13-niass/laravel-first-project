@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,15 +19,18 @@ class FormatResponse
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-
         if ($response instanceof Response) {
             $originalData = $response->getOriginalContent();
-
+            $status = $response->getStatusCode();
+           if ($originalData['data'] instanceof JsonResponse) {
+               $status = $originalData['data']->status();
+               $originalData = $originalData['data']->original;
+           }
             $formattedData = [
-                'status' => $response->status(),
+                'status' => $status,
                 'data' => $originalData['data'] ?? null,
-                'message' => $originalData['message'] ?? $this->getDefaultMessage($response->status()),
-                'success' => $response->isSuccessful(),
+                'message' => $originalData['message'] ?? $this->getDefaultMessage($status),
+                'success' => 300 > $status && $status >= 200,
             ];
             return response()->json($formattedData, $response->status());
         }

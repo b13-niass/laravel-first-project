@@ -54,6 +54,10 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Illuminate\Validation\ValidationException) {
             return response()->json(['errors' => $exception->errors()], 422);
         }
+
+//        if ($exception instanceof AuthException) {
+//            return $exception->render(); // Appel direct à la méthode render
+//        }
         // Vous pouvez ajouter plus de gestion des exceptions ici
 
         return parent::render($request, $exception);

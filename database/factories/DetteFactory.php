@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Article;
 use App\Models\Client;
 use App\Models\Dette;
+use App\Models\Paiement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,8 @@ class DetteFactory extends Factory
     public function definition()
     {
         $montant = $this->faker->randomFloat(2, 100, 1000);
-        $montantDu = $this->faker->randomFloat(2, 50, $montant);
         return [
             'montant' => $montant,
-            'montantDu' => $montantDu,
-            'montantRestant' => $montant - $montantDu,
             'client_id' => Client::factory(),
         ];
     }
@@ -39,6 +37,11 @@ class DetteFactory extends Factory
                     'updated_at' => Carbon::now(),
                 ]);
             }
+
+            // Crée des paiements pour cette dette
+            Paiement::factory()->count(2)->create([
+                'dette_id' => $dette->id,
+            ]);
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\StateEnum;
+use App\Exceptions\AuthException;
 use App\Services\Interfaces\AuthenticationServiceInterface;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,53 +21,28 @@ class AuthenticationPassport implements AuthenticationServiceInterface
     {
         try {
             if (!Auth::attempt($credentials)) {
-                return null;
+                throw new AuthException('Login ou mot de passe incorrect', Response::HTTP_UNAUTHORIZED);
             }
             $user = User::find(Auth::user()->id);
 
             if (!$user->active) {
-                return null;
+                throw new AuthException('Votre compte est désactivé', Response::HTTP_FORBIDDEN);
             }
 
-            // Revoke all existing tokens for the user
             $user->tokens->each(function ($token) {
                 $token->revoke();
             });
 
             $tokenResult = $user->createToken('authToken');
             $accessToken = $tokenResult->accessToken;
-//
-//            // Retrieve the client related to the token
-//            $clientModel = app(PassportClientRepository::class)->find($tokenResult->token->client_id);
-//
-//            // Convert Laravel Passport Client to ClientEntityInterface
-//            $clientEntity = new PassportClientEntity(
-//                $clientModel->id,
-//                $clientModel->name,
-//                $clientModel->redirect
-//            );
-//
-//            $passportAccessToken = new AccessToken(
-//                $user->id,            // $userIdentifier
-//                $tokenResult->token->scopes,  // $scopes
-//                $clientEntity                // $client
-//            );
-//            // Set additional properties
-//            $passportAccessToken->setIdentifier($tokenResult->token->id);
-//            $expiryDateTime = new \DateTimeImmutable($tokenResult->token->expires_at);
-//
-//            $passportAccessToken->setExpiryDateTime($expiryDateTime);
-
-//            $customAccessTokenService = new \App\Services\CustomAccessTokenService();
-//            $accessToken = $customAccessTokenService->generateToken();
 
             $data = [
                 'access_token' => $accessToken,
                 'token_type' => 'Bearer',
             ];
             return $data;
-        }catch (Exception $exception){
-            return null;
+        }catch (AuthException $e){
+            return $e->render();
         }
     }
 

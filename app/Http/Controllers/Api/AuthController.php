@@ -6,9 +6,9 @@ use App\Enums\StateEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccountForClientRequest;
 use App\Services\Interfaces\AuthenticationServiceInterface;
-use App\Services\AuthService;
 use App\Models\User;
 use App\Trait\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +16,8 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
 
-    protected $authService;
-    public function __construct(AuthService $authService, private AuthenticationServiceInterface $authServiceInterface)
+    public function __construct(private AuthenticationServiceInterface $authServiceInterface)
     {
-        $this->authService = $authService;
     }
 
     use ApiResponseTrait;
@@ -38,7 +36,10 @@ class AuthController extends Controller
 
         $credentials = $request->only('login', 'password');
         $data = $this->authServiceInterface->authenticate($credentials);
-        return compact('data');
+        return response()->json([
+            'data' => $data,
+            'message' => 'Connection réussi',
+        ], Response::HTTP_OK);
     }
 
     public function refresh(Request $request)
@@ -70,9 +71,9 @@ class AuthController extends Controller
         return $user;
     }
 
-    public function register(AccountForClientRequest $request){
-        $validateData = $request->validated();
-       return $this->authService->register($validateData, $request);
-    }
+//    public function register(AccountForClientRequest $request){
+//        $validateData = $request->validated();
+//       return $this->authService->register($validateData, $request);
+//    }
 
 }

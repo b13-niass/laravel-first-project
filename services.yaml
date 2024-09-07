@@ -19,3 +19,7 @@ App:
     - App\Services\UploadToS3ServiceImpl
   carte:
     - App\Services\CartePDFServiceImpl
+  App\Services\Interfaces\DetteService:
+    - App\Services\DetteServiceImpl
+  App\Repositories\Interfaces\DetteRepository:
+    - App\Repositories\DetteRepositoryImpl

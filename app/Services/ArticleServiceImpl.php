@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Enums\StateEnum;
+use App\Exceptions\ArticleException;
 use App\Filters\QuantityFilter;
 use App\Http\Requests\ArticleByLibelleRequest;
 use App\Http\Requests\StoreArticleRequest;
@@ -30,11 +31,11 @@ class ArticleServiceImpl implements ArticleService
     {
         $user = User::find(Auth::user()->id);
         if(!Gate::allows("isBoutiquier", $user)){
-            return null;
+            throw new ArticleException("Vous n'êtes pas authorizer à voir cette ressource",Response::HTTP_UNAUTHORIZED);
         }
          $articles = $this->repository->all($request);
         if (count($articles) == 0){
-            return null;
+            throw new ArticleException("Pas d'article", Response::HTTP_NOT_FOUND);
         }
         return ArticleResource::collection($articles);
     }

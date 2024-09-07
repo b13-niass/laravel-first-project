@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ClientController;
+use \App\Http\Controllers\Api\DetteController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,11 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function
         Route::post('/', [ClientController::class, 'store'])->name('store');
         Route::match(['put', 'patch'], '/{id}', [ClientController::class, 'update'])->name('update');
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::group(['prefix' => 'dettes', 'as' => 'dettes.', 'middleware' => 'auth:api'], function () {
+        Route::get('/', [DetteController::class, 'index'])->name('index');
+        Route::post('/', [DetteController::class, 'create'])->name('create');
     });
 
     Route::group(['prefix' => 'articles', 'as' => 'articles.', 'middleware' => 'auth:api'], function () {
