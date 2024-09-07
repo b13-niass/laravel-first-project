@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\RelanceToCloudJob;
 use Illuminate\Console\Command;
 
 class RelanceToCloudClient extends Command
@@ -11,7 +12,7 @@ class RelanceToCloudClient extends Command
      *
      * @var string
      */
-    protected $signature = 'app:relance-mail-client';
+    protected $signature = 'client:relance-cloud';
 
     /**
      * The console command description.
@@ -25,6 +26,6 @@ class RelanceToCloudClient extends Command
      */
     public function handle()
     {
-        //
+        dispatch(new RelanceToCloudJob());
     }
 }

@@ -38,9 +38,8 @@ class SendEmailJob implements ShouldQueue
                 'qrcode' => $qrcode,
                 'client' => $this->client
             ];
-
             $path = CarteFacade::format($data);
-//            Log::info([__LINE__,$path]);
+
             Mail::to($this->client->user->login)->send(new CarteMail($path));
     }
 
