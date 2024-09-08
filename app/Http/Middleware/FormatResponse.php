@@ -19,6 +19,7 @@ class FormatResponse
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
+//        dd($response);
         if ($response instanceof Response) {
             $originalData = $response->getOriginalContent();
             $status = $response->getStatusCode();

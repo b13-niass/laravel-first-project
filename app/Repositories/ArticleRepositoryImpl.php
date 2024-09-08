@@ -16,15 +16,6 @@ class ArticleRepositoryImpl implements ArticleRepository
 
     public function all(Request $request)
     {
-//        $query = Article::query();
-//        if ($request->has('disponible')) {
-//            $disponible = $request->query('disponible');
-//            $query = (new QuantityFilter())($query, $disponible, 'disponible');
-//        }
-//
-//        $articles = QueryBuilder::for($query)
-//            ->allowedFilters(['libelle'])
-//            ->get();
         $articles = Article::filter($request)->get();
         return $articles;
     }

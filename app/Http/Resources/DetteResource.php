@@ -17,11 +17,12 @@ class DetteResource extends JsonResource
         return [
             'id' => $this->id,
             'montant' => $this->montant,
-            'montantDu' => $this->montantDu,
-            'montantRestant' => $this->montantRestant,
+            'montant_verse' => $this->montant_verse,
+            'montant_du' => $this->montant_du,
             'client' => $this->whenLoaded('client', function () {
                 return new ClientResource($this->client);
             }),
+            'articles' => ArticleResource::collection($this->whenLoaded('articles'))
         ];
     }
 }

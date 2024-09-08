@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Exceptions\DetteException;
 use App\Http\Requests\AddDetteRequest;
 use App\Http\Requests\PaiementRequest;
+use App\Http\Resources\DetteResource;
 use App\Models\Article;
 use App\Repositories\Interfaces\DetteRepository;
 use App\Services\Interfaces\DetteService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -17,9 +19,14 @@ class DetteServiceImpl implements DetteService
 
     }
 
-    public function all()
+    public function all(Request $request)
     {
-        // TODO: Implement all() method.
+        try {
+            $dettes = $this->repository->all($request);
+            return DetteResource::collection($dettes);
+        }catch(DetteException $e){
+            return $e->render();
+        }
     }
 
     public function find($id)

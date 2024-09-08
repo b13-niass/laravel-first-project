@@ -5,14 +5,16 @@ namespace App\Repositories;
 use App\Exceptions\DetteException;
 use App\Models\Dette;
 use App\Repositories\Interfaces\DetteRepository;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DetteRepositoryImpl implements DetteRepository
 {
 
-    public function all()
+    public function all(Request $request)
     {
-        // TODO: Implement all() method.
+//        dd(Dette::filter($request)->get());
+        return Dette::filter($request);
     }
 
     public function find($id)

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 interface DetteService
 {
-    public function all();
+    public function all(Request $request);
     public function find($id);
     public function findByClient($id);
     public function create(AddDetteRequest $request);
