@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\StateEnum;
 use App\Events\ClientCreated;
+use App\Exceptions\ClientException;
 use App\Facades\CarteFacade;
 use App\Facades\ClientRepositoryFacade;
 use App\Facades\UploadFacade;
@@ -13,6 +14,7 @@ use App\Http\Requests\ClientByPhoneRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\DetteResource;
+use App\Jobs\UploadToCloudJob;
 use App\Mail\CarteMail;
 use App\Models\Client;
 use App\Models\Role;
@@ -138,29 +140,33 @@ class ClientServiceImpl implements ClientService
     {
         try {
 //            dd($request->photo);
-            $imageName = UploadFacade::upload($request->photo);
 
-            if(!$imageName){
-                return null;
-            }
+            $client = Client::find($request->client_id);
 
-//            dd($imageName);
+            $imageName = time().'.'.$request->photo->getClientOriginalExtension();
+
+            $fileName = $request->photo->storeAs('images', $imageName, [
+                'disk' => 'public'
+            ]);
+//            dd($fileName);
+            dispatch(new UploadToCloudJob($client, $fileName));
+
             $userData = [
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
                 'login' => $data['login'],
                 'role_id' => $data['role_id'],
                 'active' => $data['active'],
-                'photo' => $imageName,
+                'photo' => $fileName,
                 'password' => $data['password'],
             ];
 
             $result = ClientRepositoryFacade::register($userData, $data);
 
             return $result;
-        }catch (Exception $e) {
+        }catch (ClientException $e) {
             DB::rollBack();
-            return $data;
+            return $e->render();
         }
     }
 }

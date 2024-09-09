@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StateEnum;
 use App\Models\User;
 use App\Rules\CustomPassword;
 use App\Rules\PhoneNumber;
@@ -141,5 +142,12 @@ class StoreClientRequest extends FormRequest
             ]);
         }
 //        \Log::info('Request data after merging:', $this->all());
+    }
+
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(
+            $this->sendResponse(StateEnum::ECHEC,null, "Vous n'êtes pas authorisés à faire cette action", Response::HTTP_LENGTH_REQUIRED)
+        );
     }
 }

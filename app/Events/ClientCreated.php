@@ -19,7 +19,7 @@ class ClientCreated
 
     public Client $client;
     public $path;
-    public UploadedFile $file;
+    public ?UploadedFile $file;
 
     /**
      * Create a new event instance.
@@ -27,7 +27,7 @@ class ClientCreated
      * @param Client $client
      * @return void
      */
-    public function __construct(Client $client,UploadedFile $file)
+    public function __construct(Client $client,?UploadedFile $file=null)
     {
         $this->client = $client;
         $this->file = $file;
@@ -44,4 +44,5 @@ class ClientCreated
             new PrivateChannel('channel-name'),
         ];
     }
+
 }

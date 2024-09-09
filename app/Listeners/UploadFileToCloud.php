@@ -22,11 +22,14 @@ class UploadFileToCloud
      */
     public function handle(ClientCreated $event): void
     {
-        $imageName = time().'.'.$event->file->getClientOriginalExtension();
-        $fileName = $event->file->storeAs('images', $imageName, [
-            'disk' => 'public'
-        ]);
-        $user = $event->client->user->update(['photo' => $fileName, 'remote' => false]);
-        dispatch(new UploadToCloudJob($event->client, $fileName));
+//        dd($event->file);
+        if ($event->file) {
+            $imageName = time().'.'.$event->file->getClientOriginalExtension();
+            $fileName = $event->file->storeAs('images', $imageName, [
+                'disk' => 'public'
+            ]);
+            $user = $event->client->user->update(['photo' => $fileName, 'remote' => false]);
+            dispatch(new UploadToCloudJob($event->client, $fileName));
+        }
     }
 }

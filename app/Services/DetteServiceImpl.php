@@ -126,8 +126,24 @@ class DetteServiceImpl implements DetteService
         }
     }
 
-    public function payer(PaiementRequest $request)
+    public function payer(PaiementRequest $request, $id)
     {
-        // TODO: Implement payer() method.
+        try {
+            $dette = $this->repository->find($id);
+            $montant = $request->get('montant');
+            if ($montant > $dette->montant_du){
+                throw new DetteException('Le montant du paiement dépasse le montant de la dette', Response::HTTP_CONFLICT);
+            }
+            $result = $this->repository->payer($dette, $montant);
+//            dd($result);
+            if ($result){
+                $data = $this->repository->findWithPaiement($dette->id);
+                return new DetteResource($data[0]);
+            }
+        }catch(ModelNotFoundException$e) {
+            throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+        }catch (DetteException $e){
+            return $e->render();
+        }
     }
 }

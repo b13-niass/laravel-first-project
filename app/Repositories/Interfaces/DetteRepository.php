@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Models\Dette;
 use Illuminate\Http\Request;
 
 interface DetteRepository
@@ -12,5 +13,5 @@ interface DetteRepository
     public function findWithArticle($id);
     public function findWithPaiement($id);
     public function create($data);
-    public function payer($data);
+    public function payer(Dette $dette, $montant);
 }

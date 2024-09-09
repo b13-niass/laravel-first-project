@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StateEnum;
 use App\Rules\PhoneNumber;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Foundation\Http\FormRequest;
@@ -77,6 +78,13 @@ class UpdateClientRequest extends FormRequest
     {
         throw new HttpResponseException(
             $this->sendResponse('failed', $validator->errors(), 'Validation errors', Response::HTTP_LENGTH_REQUIRED)
+        );
+    }
+
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(
+            $this->sendResponse(StateEnum::ECHEC,null, "Vous n'êtes pas authorisés à faire cette action", Response::HTTP_LENGTH_REQUIRED)
         );
     }
 }

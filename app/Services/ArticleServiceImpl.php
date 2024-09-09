@@ -38,7 +38,7 @@ class ArticleServiceImpl implements ArticleService
             }
             $articles = $this->repository->all($request);
             if (count($articles) == 0) {
-                throw new ArticleException("Pas d'article", Response::HTTP_NOT_FOUND);
+                throw new ArticleException("Pas d'article", Response::HTTP_OK);
             }
             return ArticleResource::collection($articles);
         }catch (ArticleException $e){
@@ -57,7 +57,7 @@ class ArticleServiceImpl implements ArticleService
 
             return  new ArticleResource($article);
         } catch (ModelNotFoundException $e) {
-            throw new ArticleNotFoundException("Article introuvable", Response::HTTP_NOT_FOUND);
+            throw new ArticleNotFoundException("Article introuvable", Response::HTTP_LENGTH_REQUIRED);
         }
     }
 

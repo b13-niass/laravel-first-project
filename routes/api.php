@@ -52,6 +52,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function
         Route::get('{id}', [DetteController::class, 'showWithClient'])->name('showWithClient');
         Route::get('/{id}/articles', [DetteController::class, 'showWithArticle'])->name('showWithArticle');
         Route::get('/{id}/paiements', [DetteController::class, 'showPaiementsDette'])->name('showPaiementsDette');
+        Route::post('/{id}/paiements', [DetteController::class, 'addPaiementsDette'])->name('addPaiementsDette');
     });
 
     Route::group(['prefix' => 'articles', 'as' => 'articles.', 'middleware' => 'auth:api'], function () {

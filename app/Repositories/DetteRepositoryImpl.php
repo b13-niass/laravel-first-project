@@ -47,8 +47,9 @@ class DetteRepositoryImpl implements DetteRepository
             return $dette;
     }
 
-    public function payer($data)
+    public function payer($dette, $montant)
     {
-        // TODO: Implement payer() method.
+       return $dette->paiements()->create(['montant' => $montant]);
+//        $dette->save();
     }
 }

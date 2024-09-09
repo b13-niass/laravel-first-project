@@ -24,6 +24,7 @@ class SendFidelityCardEmail
      */
     public function handle(ClientCreated $event): void
     {
+//        dd($event->file);
         dispatch(new SendEmailJob($event->client));
     }
 }

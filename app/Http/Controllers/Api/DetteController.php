@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddDetteRequest;
+use App\Http\Requests\PaiementRequest;
 use App\Http\Resources\DetteResource;
 use App\Services\DetteServiceImpl;
 use App\Services\Interfaces\DetteService;
@@ -68,6 +69,17 @@ class DetteController extends Controller
                 'data' => $data
             ],
             200
+        );
+    }
+
+    public function addPaiementsDette(PaiementRequest $request, $id){
+        $data = $this->service->payer($request, $id);
+        return response(
+            [
+                'message' => 'Paiement ajouté avec succès',
+                'data' => $data
+            ],
+            201
         );
     }
 }

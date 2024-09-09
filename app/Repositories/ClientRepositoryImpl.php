@@ -51,8 +51,10 @@ class ClientRepositoryImpl implements ClientRepository
             'adresse' => $data['adresse']?? null
         ];
         $client = Client::make($clientData);
-//        dd( $data['user']['photo']);
-        $client->setTransientAttribute('file', $data['user']['photo']);
+        $photo = $data['user']['photo']??null;
+        if ($photo) {
+            $client->setTransientAttribute('file', $photo);
+        }
         $client->save();
         if (isset($data['user'])) {
             $role = Role::where('role', 'CLIENT')->firstOrFail();

@@ -57,4 +57,11 @@ class StoreArticleRequest extends FormRequest
             $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Validation errors', Response::HTTP_LENGTH_REQUIRED)
         );
     }
+
+    protected function failedAuthorization()
+    {
+        throw new HttpResponseException(
+            $this->sendResponse(StateEnum::ECHEC,null, "Vous n'êtes pas authorisés à faire cette action", Response::HTTP_LENGTH_REQUIRED)
+        );
+    }
 }
