@@ -19,12 +19,22 @@ class DetteRepositoryImpl implements DetteRepository
 
     public function find($id)
     {
-        // TODO: Implement find() method.
+        return Dette::findOrFail($id);
     }
 
-    public function findByClient($id)
+    public function findWithClient($id)
     {
-        // TODO: Implement findByClient() method.
+        return Dette::filterWith($id,'client');
+    }
+
+    public function findWithArticle($id)
+    {
+        return Dette::filterWith($id,'articles');
+    }
+
+    public function findWithPaiement($id)
+    {
+        return Dette::filterWith($id,'paiements');
     }
 
     public function create($data)

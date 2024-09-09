@@ -8,6 +8,7 @@ use App\Trait\ApiResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -55,7 +56,7 @@ class UpdateArticleStockRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse('failed', $validator->errors(), 'Validation errors', 400)
+            $this->sendResponse('failed', $validator->errors(), 'Validation errors', Response::HTTP_LENGTH_REQUIRED)
         );
     }
 }

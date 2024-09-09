@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddDetteRequest;
+use App\Http\Resources\DetteResource;
 use App\Services\DetteServiceImpl;
 use App\Services\Interfaces\DetteService;
 use Illuminate\Http\Request;
@@ -34,6 +35,39 @@ class DetteController extends Controller
                 'data' => $data
             ],
             201
+        );
+    }
+
+    public function showWithClient($id){
+
+        $data = $this->service->findWithClient($id);
+//        dd(new DetteResource($data[0]));
+        return response(
+            [
+                'message' => 'La dette avec son client',
+                'data' => $data
+            ],
+            200
+        );
+    }
+    public function showWithArticle($id){
+        $data = $this->service->findWithArticle($id);
+        return response(
+            [
+                'message' => 'La dette avec les articles',
+                'data' => $data
+            ],
+            200
+        );
+    }
+    public function showPaiementsDette($id){
+        $data = $this->service->findWithPaiement($id);
+        return response(
+            [
+                'message' => 'La dette avec ses paiements',
+                'data' => $data
+            ],
+            200
         );
     }
 }

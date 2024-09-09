@@ -22,6 +22,7 @@ class StoreUserRequest extends FormRequest
     public function authorize(): bool
     {
         $user = User::find(Auth::user()->id);
+//        dd(Gate::allows("isAdmin", $user));
         return Gate::allows("isAdmin", $user);
     }
 
@@ -38,7 +39,7 @@ class StoreUserRequest extends FormRequest
             'login' => 'required|unique:users,login|email',
             'role' => ['required','string', 'in:ADMIN,BOUTIQUIER'],
             'password' => ["required","string","confirmed", new CustomPassword()],
-            'photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:40',
+//            'photo' => 'required|image|mimes:jpeg,png,jpg,svg|max:40',
             'active' => ['required','boolean']
         ];
     }
@@ -63,16 +64,16 @@ class StoreUserRequest extends FormRequest
             'password.custom_password' => 'Le mot de passe doit contenir une lettre majuscule',
             'active.required' => 'L\'état est requis',
             'active.boolean' => 'L\'état doit être un booléen',
-            'photo.required' => 'La photo est requise',
-            'photo.image' => 'Le format de la photo doit être une image',
-            'photo.mimes' => 'Le format de la photo doit être JPG, JPEG, PNG ou GIF',
-            'photo.max' => 'La taille de la photo doit être inférieure à 40Ko'
+//            'photo.required' => 'La photo est requise',
+//            'photo.image' => 'Le format de la photo doit être une image',
+//            'photo.mimes' => 'Le format de la photo doit être JPG, JPEG, PNG ou GIF',
+//            'photo.max' => 'La taille de la photo doit être inférieure à 40Ko'
         ];
     }
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Erreur Validation', Response::HTTP_UNPROCESSABLE_ENTITY)
+            $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Erreur Validation', Response::HTTP_LENGTH_REQUIRED)
         );
     }
 
@@ -81,6 +82,14 @@ class StoreUserRequest extends FormRequest
         $this->merge([
             'active' => filter_var($this->active, FILTER_VALIDATE_BOOLEAN)
         ]);
+    }
+
+    protected function failedAuthorization()
+    {
+        return response()->json([
+            'data' => null,
+            'message' => "Vous n'êtes pas authorizé à acceder à cette ressource",
+        ], Response::HTTP_FORBIDDEN);
     }
 
 }

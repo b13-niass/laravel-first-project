@@ -49,6 +49,9 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function
     Route::group(['prefix' => 'dettes', 'as' => 'dettes.', 'middleware' => 'auth:api'], function () {
         Route::get('/', [DetteController::class, 'index'])->name('index');
         Route::post('/', [DetteController::class, 'create'])->name('create');
+        Route::get('{id}', [DetteController::class, 'showWithClient'])->name('showWithClient');
+        Route::get('/{id}/articles', [DetteController::class, 'showWithArticle'])->name('showWithArticle');
+        Route::get('/{id}/paiements', [DetteController::class, 'showPaiementsDette'])->name('showPaiementsDette');
     });
 
     Route::group(['prefix' => 'articles', 'as' => 'articles.', 'middleware' => 'auth:api'], function () {

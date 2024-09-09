@@ -36,7 +36,6 @@ trait MyImageTrait
         return $dataUri;
     }
 
-
     public function generateQrcode($id){
         $renderer = new ImageRenderer(
             new RendererStyle(400),

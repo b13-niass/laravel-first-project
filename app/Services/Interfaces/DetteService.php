@@ -10,7 +10,9 @@ interface DetteService
 {
     public function all(Request $request);
     public function find($id);
-    public function findByClient($id);
+    public function findWithClient($id);
+    public function findWithArticle($id);
+    public function findWithPaiement($id);
     public function create(AddDetteRequest $request);
     public function payer(PaiementRequest $request);
 }

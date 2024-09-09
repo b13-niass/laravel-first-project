@@ -9,6 +9,7 @@ use App\Http\Resources\DetteResource;
 use App\Models\Article;
 use App\Repositories\Interfaces\DetteRepository;
 use App\Services\Interfaces\DetteService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +32,49 @@ class DetteServiceImpl implements DetteService
 
     public function find($id)
     {
-        // TODO: Implement find() method.
+        try {
+            $dette = $this->repository->find($id);
+            if($dette){
+                return $dette;
+            }else{
+                throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+            }
+        }catch(DetteException $e) {
+            return $e->render();
+        }
     }
 
-    public function findByClient($id)
+    public function findWithClient($id)
     {
-        // TODO: Implement findByClient() method.
+        try {
+            $dette = $this->repository->find($id);
+            $result = $this->repository->findWithClient($id);
+            return new DetteResource($result[0]);
+        }catch(ModelNotFoundException $e) {
+            throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+        }
+    }
+
+    public function findWithArticle($id)
+    {
+        try {
+            $dette = $this->repository->find($id);
+                $result =  $this->repository->findWithArticle($id);
+                 return new DetteResource($result[0]);
+        }catch(ModelNotFoundException $e) {
+            throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+        }
+    }
+
+    public function findWithPaiement($id)
+    {
+        try {
+            $dette = $this->repository->find($id);
+                $result =  $this->repository->findWithPaiement($id);
+                 return new DetteResource($result[0]);
+        }catch(ModelNotFoundException $e) {
+            throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+        }
     }
 
     public function create(AddDetteRequest $request)

@@ -22,7 +22,8 @@ class DetteResource extends JsonResource
             'client' => $this->whenLoaded('client', function () {
                 return new ClientResource($this->client);
             }),
-            'articles' => ArticleResource::collection($this->whenLoaded('articles'))
+            'articles' => ArticleResource::collection($this->whenLoaded('articles')),
+            'paiement' => PaiementResource::collection($this->whenLoaded('paiements')),
         ];
     }
 }

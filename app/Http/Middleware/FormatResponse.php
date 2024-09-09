@@ -19,9 +19,9 @@ class FormatResponse
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-//        dd($response);
         if ($response instanceof Response) {
             $originalData = $response->getOriginalContent();
+//        dd($response);
             $status = $response->getStatusCode();
            if ($originalData['data'] instanceof JsonResponse) {
                $status = $originalData['data']->status();

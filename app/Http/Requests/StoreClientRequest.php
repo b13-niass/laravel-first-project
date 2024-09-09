@@ -9,6 +9,7 @@ use App\Trait\ApiResponseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator as Valid;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -115,7 +116,7 @@ class StoreClientRequest extends FormRequest
     public function failedValidation(Valid $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse('failed', $validator->errors(), 'Validation errors', 400)
+            $this->sendResponse('failed', $validator->errors(), 'Validation errors', Response::HTTP_LENGTH_REQUIRED)
         );
     }
 

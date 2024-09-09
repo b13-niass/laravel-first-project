@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\StateEnum;
 use App\Enums\UserRole;
+use App\Exceptions\UserException;
 use App\Filters\ActiveFilter;
 use App\Filters\IncludeRoleFilter;
 use App\Http\Controllers\Controller;
@@ -54,15 +55,28 @@ class UserController extends Controller
     public function create(StoreUserRequest $request)
     {
         $validateData = $request->validated();
+        $validateData['photo'] = 'images/profile.jpg';
         try {
+            $user = User::find(Auth::user()->id);
+
+            if(!Gate::allows("isAdmin", $user)){
+                throw new UserException("Vous n'êtes pas authorisé", Response::HTTP_FORBIDDEN);
+            }
+
             $role_libelle = $request->get('role');
-            $role = Role::where('role', $role_libelle)->firstOrFail();
+            $role = Role::where('role', $role_libelle)->first();
+            if (!$role){
+                throw new UserException("Le role n'exist pas", Response::HTTP_LENGTH_REQUIRED);
+            }
             $user = User::make($validateData);
             $user->role()->associate($role);
             $user->save();
+            if (!$user) {
+                throw new UserException("Impossible de créer l'utilisateur", Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             return $this->sendResponse(StateEnum::SUCCESS, new UserResource($user), 'Utilisateur crée avec succé', Response::HTTP_OK);
-        }catch (\Exception $e) {
-            return $this->sendResponse(StateEnum::ECHEC, null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch (UserException $e) {
+            return $e->render();
         }
     }
 

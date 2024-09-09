@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\StateEnum;
 use App\Exceptions\ArticleException;
+use App\Exceptions\ArticleNotFoundException;
 use App\Filters\QuantityFilter;
 use App\Http\Requests\ArticleByLibelleRequest;
 use App\Http\Requests\StoreArticleRequest;
@@ -15,6 +16,7 @@ use App\Models\Article;
 use App\Models\User;
 use App\Repositories\Interfaces\ArticleRepository;
 use App\Services\Interfaces\ArticleService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -29,15 +31,19 @@ class ArticleServiceImpl implements ArticleService
 
     public function all(Request $request)
     {
-        $user = User::find(Auth::user()->id);
-        if(!Gate::allows("isBoutiquier", $user)){
-            throw new ArticleException("Vous n'êtes pas authorizer à voir cette ressource",Response::HTTP_UNAUTHORIZED);
+        try {
+            $user = User::find(Auth::user()->id);
+            if (!Gate::allows("isBoutiquier", $user)) {
+                throw new ArticleException("Vous n'êtes pas authorizer à voir cette ressource", Response::HTTP_UNAUTHORIZED);
+            }
+            $articles = $this->repository->all($request);
+            if (count($articles) == 0) {
+                throw new ArticleException("Pas d'article", Response::HTTP_NOT_FOUND);
+            }
+            return ArticleResource::collection($articles);
+        }catch (ArticleException $e){
+            return $e->render();
         }
-         $articles = $this->repository->all($request);
-        if (count($articles) == 0){
-            throw new ArticleException("Pas d'article", Response::HTTP_NOT_FOUND);
-        }
-        return ArticleResource::collection($articles);
     }
 
     public function find($id)
@@ -45,13 +51,13 @@ class ArticleServiceImpl implements ArticleService
         try {
             $user = User::find(Auth::user()->id);
             if(!Gate::allows("isBoutiquier", $user)){
-                return null;
+                throw new ArticleException("Vous n'êtes pas authorizer à voir cette ressource", Response::HTTP_UNAUTHORIZED);
             }
             $article = $this->repository->find($id);
 
             return  new ArticleResource($article);
-        } catch (\Exception $e) {
-            return null;
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException("Article introuvable", Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -60,9 +66,12 @@ class ArticleServiceImpl implements ArticleService
         $validatedData = $request->validated();
         try {
             $article = $this->repository->create($validatedData);
+            if (!$article){
+                throw new ArticleException('Article non créer', Response::HTTP_LENGTH_REQUIRED);
+            }
             return new ArticleResource($article);
-        } catch (\Exception $e) {
-            return null;
+        } catch (ArticleException $e) {
+            return $e->render();
         }
     }
 
@@ -71,11 +80,12 @@ class ArticleServiceImpl implements ArticleService
         try {
             $qte = $request->get('qte');
             $id = (int) $id;
-            $article = $this->repository->update($qte, $id);
+            $a = $this->repository->find($id);
+            $article = $this->repository->update($qte, $a->id);
 
             return new ArticleResource($article);
-        } catch (\Exception $e) {
-            return null;
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException("Article introuvable", Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -94,8 +104,8 @@ class ArticleServiceImpl implements ArticleService
             $libelle = $request->get('libelle');
             $article = $this->repository->findByLibelle($libelle);
             return new ArticleResource($article);
-        } catch (\Exception $e) {
-            return null;
+        } catch (ModelNotFoundException $e) {
+            throw new ArticleNotFoundException("Article introuvable", Response::HTTP_LENGTH_REQUIRED);
         }
     }
 
@@ -129,14 +139,9 @@ class ArticleServiceImpl implements ArticleService
         try {
             $articles = $request->input('articles');
             $result = $this->repository->updateStock($articles);
+            return $result;
         } catch (\Exception $e) {
             return $result;
         }
-
-        if (!empty($failedUpdates)) {
-            return $result;
-        }
-
-        return $result;
     }
 }

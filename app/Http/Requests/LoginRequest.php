@@ -7,6 +7,7 @@ use App\Trait\ApiResponseTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
 
 
 class LoginRequest extends FormRequest
@@ -52,7 +53,7 @@ class LoginRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse('failed', $validator->errors(), 'Validation errors', 400)
+            $this->sendResponse('failed', $validator->errors(), 'Validation errors', Response::HTTP_LENGTH_REQUIRED)
         );
     }
 }

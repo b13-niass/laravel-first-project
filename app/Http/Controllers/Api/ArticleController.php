@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateArticleStockRequest;
 use App\Services\Interfaces\ArticleService;
 use App\Trait\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
@@ -43,7 +44,10 @@ class ArticleController extends Controller
     public function store(StoreArticleRequest $request)
     {
         $data = $this->service->create($request);
-        return compact('data');
+        return response()->json([
+            'data' => $data,
+            'message' => 'Article Ajouter',
+        ], Response::HTTP_CREATED);
     }
 
     // Met à jour un article existant

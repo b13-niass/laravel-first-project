@@ -121,9 +121,6 @@ class Dette extends Model
      */
     public function scopeFilter(Builder $query, $request)
     {
-        $query->with('client');
-        $query->with('articles');
-
         $query = QueryBuilder::for($query);
         $dettes = $query->get();
         if ($request->has('status')) {
@@ -135,6 +132,26 @@ class Dette extends Model
                 $dettes = $dettes->filter(fn($item) => $item->montant_du > 0);
             }
         }
+        return $dettes;
+    }
+
+    /**
+     * Scope a query to apply custom filters.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterWith(Builder $query, $id=null,$with=null)
+    {
+        if ($with) {
+            $query->with($with);
+        }
+        if ($id){
+            $query->where('id', $id);
+        }
+        $query = QueryBuilder::for($query);
+        $dettes = $query->get();
         return $dettes;
     }
 

@@ -8,7 +8,9 @@ interface DetteRepository
 {
     public function all(Request $request);
     public function find($id);
-    public function findByClient($id);
+    public function findWithClient($id);
+    public function findWithArticle($id);
+    public function findWithPaiement($id);
     public function create($data);
     public function payer($data);
 }

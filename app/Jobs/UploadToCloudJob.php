@@ -39,7 +39,7 @@ class UploadToCloudJob implements ShouldQueue
             $file = new UploadedFile($filePath,$originalName);
             $imageName = UploadFacade::upload($file);
             if ($imageName){
-                Log::info($imageName);
+                Log::info( $imageName);
                 $user = $this->client->user->update(['photo' => null ,'photo_remote' => $imageName, 'remote' => true]);
                 Log::info($user);
             }

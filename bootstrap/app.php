@@ -1,11 +1,14 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,5 +33,21 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['success' => 'failed', 'message' => 'Non authentifié', 'data' => null], 422);
             }
         });
+
+        $exceptions->render(function (ModelNotFoundException $e, Request $request) {
+            if ($e instanceof ModelNotFoundException) {
+                return response()->json([
+                    'data' => null,
+                    'message' => "Cette élément n'existe pas",
+                ], Response::HTTP_OK);            }
+        });
+
+//        $exceptions->render(function (AuthorizationException $e, Request $request) {
+//            if ($e instanceof AuthorizationException) {
+//                return response()->json([
+//                    'data' => null,
+//                    'message' => "Cette élément n'existe pas",
+//                ], Response::HTTP_OK);            }
+//        });
 
     })->create();

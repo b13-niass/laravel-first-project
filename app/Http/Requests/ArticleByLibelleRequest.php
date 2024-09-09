@@ -44,7 +44,7 @@ class ArticleByLibelleRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Erreur Validation', Response::HTTP_UNPROCESSABLE_ENTITY)
+            $this->sendResponse(StateEnum::ECHEC, $validator->errors(), 'Erreur Validation', Response::HTTP_LENGTH_REQUIRED)
         );
     }
 }
