@@ -53,6 +53,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function
         Route::get('/{id}/articles', [DetteController::class, 'showWithArticle'])->name('showWithArticle');
         Route::get('/{id}/paiements', [DetteController::class, 'showPaiementsDette'])->name('showPaiementsDette');
         Route::post('/{id}/paiements', [DetteController::class, 'addPaiementsDette'])->name('addPaiementsDette');
+        Route::get('/clients/messages', [DetteController::class, 'clientsMessages'])->name('clients.messages');
     });
 
     Route::group(['prefix' => 'articles', 'as' => 'articles.', 'middleware' => 'auth:api'], function () {
@@ -78,8 +79,10 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api.format.response'], function
     Route::get('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('auth.refresh');
     Route::get('/getAuthUser', [AuthController::class, 'getAuthenticatedUser'])->middleware('auth:api')->name('auth.getAuthenticatedUser');
 
-//    Route::get('/teste', function (Request $request){
-//        $data = 2;
-//        return response()->json(compact('data'), 404);
-//    });
+
+});
+
+Route::get('/teste', function (Request $request){
+    $dette = \App\Models\Dette::where('id',1)->with('client')->with('articles')->with('paiements')->get();
+    return response()->json(compact('dette'), 200);
 });

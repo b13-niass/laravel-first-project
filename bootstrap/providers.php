@@ -5,4 +5,5 @@ return [
     App\Providers\AuthCustomServiceProvider::class,
     App\Providers\HorizonServiceProvider::class,
     App\Providers\TelescopeServiceProvider::class,
+    MongoDB\Laravel\MongoDBServiceProvider::class,
 ];

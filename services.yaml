@@ -23,3 +23,5 @@ App:
     - App\Services\DetteServiceImpl
   App\Repositories\Interfaces\DetteRepository:
     - App\Repositories\DetteRepositoryImpl
+  App\Services\Interfaces\MessageService:
+    - App\Services\InfoBipServiceImpl

@@ -82,4 +82,15 @@ class DetteController extends Controller
             201
         );
     }
+
+    public function clientsMessages(){
+        $data = $this->service->messages();
+        return response(
+            [
+                'message' => 'Les messages sont envoyés',
+                'data' => $data
+            ],
+            200
+        );
+    }
 }

@@ -52,4 +52,23 @@ class DetteRepositoryImpl implements DetteRepository
        return $dette->paiements()->create(['montant' => $montant]);
 //        $dette->save();
     }
+
+    /**
+     * Récupérer toutes les dettes non soldées et les grouper par client_id avec un cumul des montant_du.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTotalDettesNonSolderParClient()
+    {
+        $dettes = Dette::all();
+        $dettes = $dettes->filter(fn($dette) => $dette->montant_du > 0);
+
+        $dettesGroupes = $dettes->groupBy('client_id')->map(function ($group) {
+            $client = $group->first()->client;
+            $client->montant_du = $group->sum('montant_du');
+            return $client;
+        })->values();
+
+        return $dettesGroupes;
+    }
 }

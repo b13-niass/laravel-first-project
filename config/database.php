@@ -30,7 +30,11 @@ return [
     */
 
     'connections' => [
-
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => env('DB_URL', 'mongodb+srv://barhamadieng66:Ev3I9KTwWAVf30Vj@cluster0.qq81p.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+            'database' => 'bdettes',
+        ],
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),

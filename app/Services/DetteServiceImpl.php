@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\SendMessaged;
 use App\Exceptions\DetteException;
 use App\Http\Requests\AddDetteRequest;
 use App\Http\Requests\PaiementRequest;
@@ -142,6 +143,16 @@ class DetteServiceImpl implements DetteService
             }
         }catch(ModelNotFoundException$e) {
             throw new DetteException("Dette introuvable", Response::HTTP_LENGTH_REQUIRED);
+        }catch (DetteException $e){
+            return $e->render();
+        }
+    }
+
+    public function messages(){
+        try {
+            $dettes = $this->repository->getTotalDettesNonSolderParClient();
+//            dd($dettes->toArray());
+            event(new SendMessaged($dettes->toArray()));
         }catch (DetteException $e){
             return $e->render();
         }

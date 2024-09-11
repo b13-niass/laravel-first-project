@@ -14,4 +14,5 @@ interface DetteRepository
     public function findWithPaiement($id);
     public function create($data);
     public function payer(Dette $dette, $montant);
+    public function getTotalDettesNonSolderParClient();
 }

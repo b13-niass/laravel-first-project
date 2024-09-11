@@ -12,17 +12,8 @@ class CartePDFServiceImpl implements  CarteService
     public function format($data)
     {
         $client = new ClientResource($data['client']);
-//        $svg1 = $this->svgToBase64(public_path('carte/flat_1.svg'));
-//        dd($svg1);
-//        $svg2 = $this->svgToBase64(public_path('carte/pattern-waves.svg'));
         $photo = $this->getImageLocalAsBase64($client->user->photo);
         $qrcode = $data['qrcode'];
-        $html = view('mails.carte_fidelite_client', compact('client', 'qrcode','photo'))->render();
-        $mpdf = new Mpdf();
-        $mpdf->SetDisplayMode('fullpage');
-        $mpdf->WriteHTML($html);
-        $filePath = storage_path('app/public/carte/my_pdf_file.pdf');
-        $mpdf->Output($filePath, 'F');
         return $filePath;
     }
 

@@ -15,4 +15,5 @@ interface DetteService
     public function findWithPaiement($id);
     public function create(AddDetteRequest $request);
     public function payer(PaiementRequest $request, $id);
+    public function messages();
 }
